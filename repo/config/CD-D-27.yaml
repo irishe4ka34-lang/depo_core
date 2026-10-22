@@ -1,0 +1,55 @@
+id: CFG-CD-D-27
+title: Профили внешнего обмена
+version: структура; значения не заданы
+note: 'Версии форматов контрагентов, происхождение, ключи повтора и правило финальности. Регистрация выпуска (UC-027) и открытие счёта N (UC-032) — ручные: обязательных адаптеров и квитанций ОИС для них нет. Ключи повтора — вопрос MODEL-Q03; финальность — OD-22. Для РЦД — профиль API РЦД (REV-R16).'
+origin: КЭ1-03 § CD-D-27
+fields:
+- name: sourceSystem
+  type: Code
+- name: targetSystem
+  type: Code
+- name: schemaName
+  type: Code
+- name: schemaVersion
+  type: Version
+- name: createdAt
+  type: DateTime
+- name: businessTime
+  type: DateTime
+- name: signature
+  type: EvidenceRef
+- name: certificateRef
+  type: Ref
+- name: payloadHash
+  type: Hash
+- name: correlationId
+  type: ID
+  note: не ключ однократности
+- name: causationId
+  type: ID
+- name: businessOperationId
+  type: ID
+  note: ключ экономического эффекта
+- name: field_mapping
+  type: SchemaMap
+  note: коды внешних систем — данные (REV-R16)
+- name: channel
+  type: Code
+  note: ручной / API
+- name: authentication_policy
+  type: Policy
+- name: finality_rule
+  type: Predicate
+  note: что считается подтверждением (R-022)
+- name: send_receipts
+  type: Boolean
+  note: рубильник наших технических квитанций ОИС — включён → формируются и уходят после дедупликации; выключен → не формируются. В Э1 выключен (DEC-2026-10-22-04)
+- name: version_wait_until
+  type: Duration
+  note: сколько ждать пропущенную версию статуса — до конца рабочего дня, затем запрос текущего статуса (MODEL-Q03)
+- name: handler_retry_limit
+  type: Integer
+  note: повторов передачи обработчику до задачи и инцидента — 3 (UC-046 И3)
+- name: quarantine_incident_threshold
+  type: Integer
+  note: сообщений одного типа в карантине за час, после которого инцидент — 5 (UC-046 И1)

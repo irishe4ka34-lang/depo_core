@@ -1,0 +1,14 @@
+id: K01
+entity: party_ref
+title: Ссылка на депонента
+note: Снимок из реестра депонентов; ядро не хранит персональные данные и не идентифицирует.
+fields:
+  - {name: id, type: ID, required: true, note: внутренний ключ}
+  - {name: depositor_code, type: Hex256, required: true, trace: "NR-892-2#2.4", note: "код депонента ГОСТ Р 34.11-2012; при изменении — новый код, прежние сохраняются"}
+  - {name: previous_codes, type: "Hex256[]", required: false, trace: "NR-892-2#2.11", note: используется при поиске дублей}
+  - {name: party_kind, type: "Code(FL|IP|UL)", required: true, trace: "NR-892-2#2.3", note: "вид лица — разряд 9 номера счёта"}
+  - {name: residency_country, type: "Code(ОКСМ)", required: true, trace: "NR-892-APP#number", note: "разряды 6–8 номера счёта"}
+  - {name: kyc_passed_at, type: DateTime, required: true, trace: "NR-115-7", note: "без пройденной идентификации счёт не открывается"}
+  - {name: kyc_next_due, type: Date, required: true, trace: "NR-115-7#update", note: "kyc_passed_at + 1 год, при низком риске + 3 года; просрочка — REV-R26"}
+  - {name: risk_level, type: "Code(LOW|STANDARD|HIGH)", required: true, trace: "NR-115-7#update", note: "HIGH — случай контролёра REV-R22"}
+  - {name: representative_id, type: ID, required: false, trace: "NR-892-2#2.2", note: представитель депонента}

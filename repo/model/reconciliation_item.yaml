@@ -1,0 +1,104 @@
+id: K14
+entity: reconciliation_item
+title: Результат сравнения
+note: 'Результат сравнения по выпуску и месту: разницы «обязательства − активы» и «активы − внешние» (схема — LEVELS). Снимок входов и результата неизменен; MISMATCH журнал не исправляет. Обязательства — по всем счетам O и N этого места учёта, включая счета посредников.'
+origin: 'КЭ1-03 § K14; Связанные UC: 047,048. Опора: E1-03:P00042–P00043; P00145–P00146; P00154.'
+fields:
+- name: id
+  title: Внутренний ключ этой записи
+  type: ID
+  required: Да
+  key: PK
+  note: ''
+- name: run_id
+  title: Запуск
+  type: ID
+  required: Да
+  key: FK → reconciliation_run
+  note: ''
+- name: instrument_id
+  title: Выпуск
+  type: ID
+  required: Да
+  key: FK → instrument_version
+  note: ''
+- name: custody_link_id
+  title: Место учёта
+  type: ID
+  required: Да
+  key: FK → custody_link
+  note: ''
+- name: external_snapshot_id
+  title: Внешний срез
+  type: ID
+  required: Нет при отсутствии ответа
+  key: FK → external_snapshot
+  note: Тот же стабильный выпуск/место, единица и as_of, полнота подтверждена. Иначе delta_external пусто и UNDETERMINED
+- name: liability_total
+  title: Сумма ACCOUNT на cutoff
+  type: Количество
+  required: Да
+  key: ''
+  note: целое число минимальных единиц; масштаб — quantity_scale выпуска (REV-R12)
+- name: coverage_total
+  title: Внутренний COVERAGE на cutoff
+  type: Количество
+  required: Да
+  key: ''
+  note: целое число минимальных единиц; масштаб — quantity_scale выпуска (REV-R12)
+- name: delta_internal
+  title: ACCOUNT минус COVERAGE
+  type: Количество
+  required: Да
+  key: ''
+  note: целое число минимальных единиц; масштаб — quantity_scale выпуска (REV-R12)
+  trace: NR-892-8#8.6
+- name: delta_external
+  title: COVERAGE минус внешний срез
+  type: Количество
+  required: Только при сопоставимом полном внешнем срезе
+  key: ''
+  note: целое число минимальных единиц; масштаб — quantity_scale выпуска (REV-R12)
+- name: state
+  title: Состояние этого объекта
+  type: Код
+  required: Да
+  key: 'Коды: MATCH/MISMATCH/UNDETERMINED'
+  note: переходы — STATES
+- name: input_manifest
+  title: Перечень источников расчёта
+  type: Набор ID и версий
+  required: Да; snapshot-T01
+  key: ''
+  note: Расчёт сверки. Воспроизводит суммы по журналу, срезу и cutoff
+- name: in_transit_quantity
+  title: В пути
+  type: Количество
+  required: Для РЦД
+  key: ''
+  note: Наши незавершённые K11 на момент среза
+- name: isolated_quantity
+  title: Обособлено у РЦД
+  type: Количество
+  required: Для РЦД
+  key: ''
+  note: Из K12.isolated
+- name: explained_delta
+  title: Объяснённая разница
+  type: Количество
+  required: Для РЦД
+  key: ''
+  note: MATCH только если необъяснённый остаток разницы равен нулю (C06)
+links:
+- id: L37
+  link: run_id → reconciliation_run.id; к родителю 1, обратно 0..N
+  required: Да
+- id: L38
+  link: instrument_id → instrument_version.id; к родителю 1, обратно 0..N
+  required: Да
+- id: L39
+  link: custody_link_id → custody_link.id; к родителю 1, обратно 0..N
+  required: Да
+- id: L40
+  link: external_snapshot_id → external_snapshot.id; к родителю 0..1, обратно 0..N
+  required: Нет при отсутствии ответа

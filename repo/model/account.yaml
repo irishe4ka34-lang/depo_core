@@ -1,0 +1,16 @@
+id: K05
+entity: account
+title: Внутренний счёт
+fields:
+  - {name: id, type: ID, required: true}
+  - {name: number, type: "Text(20)", required: true, trace: "NR-892-APP#number", note: "строится по REV-R23"}
+  - {name: kind_code, type: "Code(CD-D-08)", required: true, trace: "NR-282-22#kinds", note: "код 892-П с включённым флагом"}
+  - {name: party_id, type: "FK→party_ref", required: true, trace: "NR-892-9#9.3", note: один депонент на счёт}
+  - {name: basis_id, type: "FK→basis_ref", required: true, trace: "NR-892-9#9.1", note: договор цифрового учёта}
+  - {name: opening_receipt_id, type: "FK→command_receipt", required: true, note: "requestId; повтор возвращает тот же счёт"}
+  - {name: servicing_agent_id, type: "FK→party_ref", required: false, trace: "REV-R18"}
+  - {name: authority_id, type: "FK→agent_authority", required: "если есть servicing_agent_id", trace: "REV-R25", note: "полномочие K24 вместо снимка"}
+  - {name: holder_may_instruct, type: Boolean, required: true, trace: "NR-892-9#11.9"}
+  - {name: controller_id, type: ID, required: "в случаях REV-R22", trace: "REV-R22"}
+  - {name: opened_at, type: DateTime, required: true}
+  - {name: client_notified_at, type: DateTime, required: false, trace: "NR-892-9#9.2", note: "не позднее следующего дня после opened_at"}

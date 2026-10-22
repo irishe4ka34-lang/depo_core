@@ -1,0 +1,88 @@
+id: K08
+entity: accounting_entry
+title: Неизменяемая запись учёта
+note: 'Первичная запись изменения количества на одном из двух уровней: ACCOUNT — счёт депонента, COVERAGE — счёт активов AA. Двойная запись по 892-П п.8.6: приход на пассивный счёт сопровождается приходом на активный. Только добавление; исправление — новой записью со ссылкой на исходную.'
+origin: 'КЭ1-03 § K08; Связанные UC: 037,041,056. Опора: E1-03:P00028–P00043; P00098–P00101; P00140–P00141.'
+fields:
+- name: id
+  title: Внутренний ключ этой записи
+  type: ID
+  required: Да
+  key: PK
+  note: ''
+- name: operation_id
+  title: Операция
+  type: ID
+  required: Да
+  key: FK → accounting_operation
+  note: зачисление — ровно две записи ACCOUNT и COVERAGE по одному контексту и на одно подтверждённое количество (C01)
+- name: line_no
+  title: Номер записи внутри операции
+  type: Целое
+  required: Да
+  key: U1 с operation_id
+  note: Положительное
+- name: level
+  title: Уровень внутреннего учёта
+  type: Код
+  required: Да
+  key: 'Коды: ACCOUNT/COVERAGE'
+  note: ACCOUNT — детализация; COVERAGE — внутренний актив
+- name: account_id
+  title: Счёт детализации
+  type: ID
+  required: Для ACCOUNT; иначе пусто
+  key: FK → account
+  note: ''
+  trace: NR-892-5#5.2
+- name: section_id
+  title: Раздел
+  type: ID
+  required: Нет; если включён
+  key: FK → account_section
+  note: При наличии принадлежит account_id
+- name: instrument_id
+  title: Выпуск
+  type: ID
+  required: Да
+  key: FK → instrument_version
+  note: ''
+- name: custody_link_id
+  title: Версия места и внешней связи
+  type: ID
+  required: Да
+  key: FK → custody_link
+  note: ''
+- name: quantity_delta
+  title: Изменение количества
+  type: Количество
+  required: Да
+  key: ''
+  note: целое число минимальных единиц (REV-R12); Для зачисления >0; обе внутренние стороны увеличиваются на одинаковое количество
+  trace: NR-892-8#8.6
+- name: correction_of_id
+  title: Исходная запись исправления
+  type: ID
+  required: Только для разрешённой коррекции
+  key: FK → accounting_entry
+  note: Не ссылка на себя; без циклов; исходная запись сохранена
+  trace: NR-892-1#1.5
+links:
+- id: L16
+  link: operation_id → accounting_operation.id; к родителю 1, обратно 2 при зачислении
+  required: Да
+- id: L17
+  link: account_id → account.id; к родителю 0..1, обратно 0..N
+  required: Для ACCOUNT; иначе пусто
+- id: L18
+  link: section_id → account_section.id; к родителю 0..1, обратно 0..N
+  required: Нет; если включён
+- id: L19
+  link: instrument_id → instrument_version.id; к родителю 1, обратно 0..N
+  required: Да
+- id: L20
+  link: custody_link_id → custody_link.id; к родителю 1, обратно 0..N
+  required: Да
+- id: L21
+  link: correction_of_id → accounting_entry.id; к родителю 0..1, обратно 0..N
+  required: Только для разрешённой коррекции

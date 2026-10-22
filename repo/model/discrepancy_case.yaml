@@ -1,0 +1,79 @@
+id: K15
+entity: discrepancy_case
+title: Дело расхождения
+note: 'Дело расхождения: причина, влияние, ответственный, защитная мера, доказательства. Закрывается только после повторной сверки с MATCH и решения второго сотрудника (R-009).'
+origin: 'КЭ1-03 § K15; Связанные UC: 048,049. Опора: E1-03:P00118–P00121; P00154–P00156.'
+fields:
+- name: id
+  title: Внутренний ключ этой записи
+  type: ID
+  required: Да
+  key: PK
+  note: ''
+- name: opening_item_id
+  title: Выявивший результат
+  type: ID
+  required: Да
+  key: FK → reconciliation_item
+  note: ''
+- name: resolution_item_id
+  title: Подтверждающая повторная сверка
+  type: ID
+  required: Только при закрытии
+  key: FK → reconciliation_item
+  note: ''
+- name: reason_code
+  title: Причина/категория
+  type: Код
+  required: Да
+  key: CD-D-16; UNSOLICITED_EXTERNAL_MOVE/OVERCREDIT/RETURN_PENDING
+  note: REV-R11
+- name: owner_ref
+  title: Ответственный
+  type: Внешняя ссылка IAM
+  required: При назначении
+  key: ''
+  note: Источник + ID
+- name: state
+  title: Состояние этого объекта
+  type: Код
+  required: Да
+  key: 'Коды: OPEN/INVESTIGATING/CLOSED'
+  note: переходы — STATES
+- name: protection_id
+  title: Применимая защитная версия
+  type: ID
+  required: Если требуется защита
+  key: FK → protection_version
+  note: ''
+- name: evidence_id
+  title: Доказательство основания или результата
+  type: ID
+  required: Для закрытия
+  key: FK → evidence
+  note: ''
+- name: detected_at
+  title: Момент обнаружения
+  type: Момент
+  required: Да
+  key: ''
+  note: UTC и исходная зона
+- name: due_rule_ref
+  title: Правило срока и календаря
+  type: Версионированная внешняя ссылка
+  required: При применимости
+  key: CD-D-15; MODEL-Q07
+  note: Не заменять рабочий день 24 часами
+links:
+- id: L41
+  link: opening_item_id → reconciliation_item.id; к родителю 1, обратно 0..N
+  required: Да
+- id: L42
+  link: resolution_item_id → reconciliation_item.id; к родителю 0..1, обратно 0..N
+  required: Только при закрытии
+- id: L43
+  link: protection_id → protection_version.id; к родителю 0..1, обратно 0..N
+  required: Если требуется защита
+- id: L44
+  link: evidence_id → evidence.id; к родителю 0..1, обратно 0..N
+  required: Для закрытия

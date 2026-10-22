@@ -1,0 +1,102 @@
+id: K12
+entity: external_snapshot
+title: Подтверждённый внешний срез
+note: 'Количество на внешнем счёте N на точный момент, с полнотой и происхождением. Источник для сверки — последний электронный документ вышестоящего на дату сверки (892-П п.6.1). Неизменяемый снимок: новый ответ прежний не переписывает; отсутствие ответа не создаёт строку с нулём.'
+origin: 'КЭ1-03 § K12; Связанные UC: 047. Опора: E1-03:P00082–P00085; P00145–P00146; P01163–P01202.'
+fields:
+- name: id
+  title: Внутренний ключ этой записи
+  type: ID
+  required: Да
+  key: PK
+  note: ''
+- name: custody_link_id
+  title: Подтверждённая внешняя связь
+  type: ID
+  required: Да
+  key: FK → custody_link
+  note: ''
+- name: instrument_id
+  title: Версия выпуска
+  type: ID
+  required: Да
+  key: FK → instrument_version
+  note: ''
+- name: as_of
+  title: Внешний момент среза
+  type: Момент
+  required: Да
+  key: ''
+  note: UTC и исходная зона
+- name: received_at
+  title: Время получения
+  type: Момент
+  required: Да
+  key: ''
+  note: UTC и исходная зона
+- name: quantity
+  title: Внешнее количество
+  type: Количество
+  required: При подтверждённом значении
+  key: ''
+  note: целое число минимальных единиц; масштаб — quantity_scale выпуска (REV-R12)
+  trace: NR-892-6#6.1
+- name: completeness
+  title: Полнота
+  type: Код
+  required: Да
+  key: 'Коды: COMPLETE/INCOMPLETE/UNKNOWN'
+  note: ''
+- name: source_version
+  title: Версия ответа
+  type: Версия
+  required: Да
+  key: ''
+  note: ОИС
+- name: evidence_id
+  title: Доказательство основания или результата
+  type: ID
+  required: Да
+  key: FK → evidence
+  note: ''
+- name: available_quantity
+  title: Доступный остаток
+  type: Количество
+  required: Для РЦД
+  key: ''
+  note: available из 3.5
+- name: isolated
+  title: Обособленный остаток
+  type: Структурированный снимок
+  required: Нет
+  key: ''
+  note: Коды KT/TO/TI + количество; quantity = доступное + сумма обособленного
+- name: snapshot_kind
+  title: Вид среза
+  type: Код
+  required: Да
+  key: ''
+  note: AS_OF_DATE (1.5)/AT_REQUEST (3.5); Срез на момент запроса сопоставим, только если зафиксированы поручения в пути
+- name: end_of_day
+  title: На конец операционного дня
+  type: Булево
+  required: Нет
+  key: ''
+  note: endOfDay из 1.5
+- name: statement_scope
+  title: Охват документа ОИС
+  type: Код
+  required: Да
+  key: 'Коды: ALL_ISSUES/ONE_ISSUE'
+  trace: DEC-2026-10-22-02
+  note: ALL_ISSUES — выписка по всем выпускам на счёте N, отсутствие выпуска в ней = 0; ONE_ISSUE полноту не доказывает
+links:
+- id: L32
+  link: custody_link_id → custody_link.id; к родителю 1, обратно 0..N
+  required: Да
+- id: L33
+  link: instrument_id → instrument_version.id; к родителю 1, обратно 0..N
+  required: Да
+- id: L34
+  link: evidence_id → evidence.id; к родителю 1, обратно 0..N
+  required: Да

@@ -1,0 +1,33 @@
+id: CFG-CD-D-16
+title: Методики сверки и категории расхождений
+version: структура; значения не заданы
+note: Сравнение позиций депонентов, счёта активов AA и внешнего остатка на одном срезе (R-002, R-026); полнота и категории расхождений; защитная мера. Источник внешнего остатка — последний электронный документ вышестоящего на дату сверки (892-П п.6.1). Пороги и допуски не заданы.
+origin: КЭ1-03 § CD-D-16
+fields:
+- name: right_scope_ref
+  type: Ref
+  note: какие выпуски
+- name: custody_scope_ref
+  type: Ref
+  note: какие места учёта
+- name: level_sources
+  type: Ref[]
+  note: источник каждого уровня
+- name: cut_rule
+  type: Rule
+  note: время среза — по CD-D-15
+- name: unit_rule_ref
+  type: Ref
+- name: method_version
+  type: Version
+- name: completeness_rule
+  type: Predicate
+  note: когда запуск COMPLETE
+- name: difference_kind
+  type: Code
+  note: категория расхождения
+- name: impact_code
+  type: Code
+- name: protection_rule_ref
+  type: Ref
+  note: защитная мера при превышении пассивов

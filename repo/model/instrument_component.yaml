@@ -1,0 +1,14 @@
+id: K23
+entity: instrument_component
+title: Составляющая права
+note: "Для PF2 и отдельных денежных прав PF3/PF4 (REV-R14)."
+fields:
+  - {name: id, type: ID, required: true}
+  - {name: instrument_id, type: "FK→instrument_version", required: true}
+  - {name: component_no, type: Int, required: true}
+  - {name: component_kind, type: "Code(MONEY_CLAIM|OTHER_RIGHT|SECURITIES_RIGHTS|SECURITIES_DELIVERY|UTILITY)", required: true, trace: "NR-282-7#profiles"}
+  - {name: obligor_ref, type: ExternalRef, required: true}
+  - {name: subject, type: Snapshot, required: true, note: "валюта и сумма / ЦБ и количество / иной предмет"}
+  - {name: term_condition, type: Snapshot, required: true}
+  - {name: combination_mode, type: "Code(JOINT|ALTERNATIVE)", required: "для PF2", trace: "REV-R14"}
+  - {name: execution_confirmation_rule, type: Ref, required: true}

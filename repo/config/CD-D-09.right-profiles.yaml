@@ -1,0 +1,15 @@
+id: CFG-CD-D-09
+title: Профили прав и правила обязательности реквизитов
+version: 2026-10-21.1
+source: [NR-282-7#profiles, NR-892-3#3.7]
+rules:
+  - {profile: ALL, when: "always", require: "digital_rights_kind, digital_rights_id, issuer_ref, ois_operator, quantity_scale, min_step, issue_decision_evidence_id"}
+  - {profile: PF1, when: "always", require: "currency, amount_or_formula, execution_terms, obligor_ref"}
+  - {profile: PF1, when: "decision.has_income", require: "income_terms, payment_schedule"}
+  - {profile: PF1, when: "decision.has_early_redemption", require: "early_redemption_terms"}
+  - {profile: PF1, when: "decision.has_collateral", require: "collateral_terms"}
+  - {profile: PF2, when: "always", require: "components ≥ 2 (K23), combination_mode"}
+  - {profile: PF2, when: "combination_mode == ALTERNATIVE", require: "choice_procedure"}
+  - {profile: PF3, when: "always", require: "underlying_issuer, underlying_security_id, rights_scope, dfa_to_security_ratio, instruction_procedure, underlying_custody_place"}
+  - {profile: PF4, when: "always", require: "security_identity, quantity_or_ratio, delivery_term_or_event, delivery_procedure, recipient_details"}
+  - {profile: PF3|PF4, when: "decision.has_money_right", require: "K23 MONEY_CLAIM"}

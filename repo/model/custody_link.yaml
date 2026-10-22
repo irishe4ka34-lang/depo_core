@@ -1,0 +1,147 @@
+id: K04
+entity: custody_link
+title: Версия внешней связи
+note: 'Проверенная связь выпуска с внешним счётом N нашего ЦД и местом учёта. Смена реквизитов или статуса счёта у ОИС — новая проверка и новая версия; операции ссылаются на версию, действовавшую при проведении. Связь не создаёт ни позиции депонента, ни покрытия. Это запись «выпуск X учитывается на нашем счёте N у оператора Y»: без неё зачисления выпуска не принимаются. Конфликтующие связи — C12. Вид верхнего участника определяет вид счёта активов: ОИС → AA01, вышестоящий ЦД → AA00; как AA ведётся в реестре счетов — вопрос RV-06.'
+origin: 'КЭ1-03 § K04; Связанные UC: 032,033. Опора: E1-03:P00022–P00024; P00074–P00077; P01252. UC-032 описывает ручное получение результата внешнего открытия; UC-033 сохраняет и проверяет связь. Сама связь не создаёт ни клиентской позиции, ни внутреннего покрытия.'
+fields:
+- name: id
+  title: Внутренний ключ этой записи
+  type: ID
+  required: Да
+  key: PK
+  note: ''
+- name: custody_key
+  title: Стабильная логическая идентичность между версиями
+  type: ID
+  required: Да
+  key: U с версией
+  note: не уникален отдельно; Одна идентичность для совместимых версий; Новая версия не создаёт новое право/место. Агрегация использует стабильный ключ; смена единицы требует отдельного решения
+- name: instrument_id
+  title: Версия сопоставленного выпуска
+  type: ID
+  required: Да
+  key: FK → instrument_version
+  note: ''
+- name: source_system
+  title: ОИС источник
+  type: Код
+  required: Да
+  key: CD-D-27
+  note: ''
+- name: external_account_id
+  title: Внешний счёт самого ЦД
+  type: ID
+  required: Да
+  key: ''
+  note: Подтверждённые реквизиты ОИС, полученные в ручном UC-032 и проверенные при UC-033. Не ID счёта депонента; ключ в пространстве ОИС
+  trace: NR-892-4#4.7
+- name: location_key
+  title: Место учёта
+  type: ID
+  required: Да
+  key: ''
+  note: Каталог внешних мест
+- name: version
+  title: Версия связи
+  type: Версия
+  required: Да
+  key: U1 с source_system, external_account_id, instrument_id
+  note: ''
+- name: state
+  title: Состояние этого объекта
+  type: Код
+  required: Да
+  key: 'Коды: UNVERIFIED/READY/SUSPENDED'
+  note: переходы — STATES
+- name: verified_at
+  title: Время завершения проверки
+  type: Момент
+  required: При READY
+  key: ''
+  note: UTC и исходная зона
+- name: evidence_id
+  title: Доказательство основания или результата
+  type: ID
+  required: Да
+  key: FK → evidence
+  note: ''
+- name: upper_kind
+  title: Вид верхнего участника
+  type: Код
+  required: Да
+  key: 'Коды: OIS/UPPER_CD'
+  note: OIS → AA01, UPPER_CD → AA00 (схема учётных счетов)
+  trace: NR-892-10#10.2
+- name: external_depositor_id
+  title: Наш ID у верхнего ЦД
+  type: ID
+  required: Для UPPER_CD
+  key: ''
+  note: deponentId; Метод 1.2 РЦД
+- name: external_account_no
+  title: Номер внешнего счёта
+  type: Текст
+  required: Для UPPER_CD
+  key: ''
+  note: depoAccountNo; Хранится отдельно от external_account_id
+- name: section_code
+  title: Раздел внешнего счёта
+  type: Текст
+  required: Нет
+  key: ''
+  note: Часть custody_key; отсутствие — явное значение; Метод 1.4 РЦД. Требование ключа действует всегда
+- name: section_kind
+  title: Вид раздела
+  type: Код
+  required: Если есть раздел
+  key: 'Коды: REGULAR/TRADING'
+  note: TRADING — только по RCD-D4, п.9.4 892-П
+- name: upper_name
+  title: Наименование оператора
+  type: Текст
+  required: Да
+  trace: NR-892-4#4.7
+  note: из уведомления об открытии
+- name: upper_inn
+  title: ИНН оператора
+  type: Текст
+  required: Да
+  trace: NR-892-4#4.7
+  note: вместе с external_account_id — ключ счёта N
+- name: external_account_kind
+  title: Вид счёта N
+  type: Код
+  required: Да
+  key: 'Коды: REGULAR/TRADING'
+  note: обычный или торговый
+- name: external_opened_at
+  title: Дата открытия счёта N
+  type: Момент
+  required: Да
+  trace: NR-892-10#10.1
+  note: из уведомления оператора
+- name: last_status_check_at
+  title: Последняя проверка статуса и реквизитов у ОИС
+  type: Момент
+  required: При READY
+  trace: DEC-2026-10-22-02
+  note: по уведомлению ОИС, на ежедневной сверке или по ежемесячной справке
+- name: last_status_evidence_id
+  title: Документ последней проверки
+  type: ID
+  required: При READY
+  key: FK → evidence
+  note: уведомление, документ сверки или справка оператора
+- name: opening_operation_id
+  title: Заявление об открытии
+  type: ID
+  required: Да
+  key: FK → external_operation
+  note: K11 OPEN_ACCOUNT в CONFIRMED с уведомлением
+links:
+- id: L04
+  link: instrument_id → instrument_version.id; к родителю 1, обратно 0..N
+  required: Да
+- id: L05
+  link: evidence_id → evidence.id; к родителю 1, обратно 0..N
+  required: Да

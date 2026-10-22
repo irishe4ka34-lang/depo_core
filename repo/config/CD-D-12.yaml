@@ -1,0 +1,22 @@
+id: CFG-CD-D-12
+title: Причины отказа и ошибки обмена
+version: структура; значения не заданы
+note: Различает окончательный отказ, временную недоступность, неизвестный исход и конфликт повтора. Справочник ошибок, а не учётный объект. Значения кодов не заданы.
+origin: КЭ1-03 § CD-D-12
+fields:
+- name: code
+  type: String
+  note: код причины
+- name: message
+  type: String
+  note: текст для человека
+- name: retryable
+  type: Boolean
+  note: можно ли повторить с тем же ключом
+- name: validationErrors
+  type: Error[]
+- name: correlationId
+  type: ID
+  note: не ключ однократности
+- name: timestamp
+  type: DateTime

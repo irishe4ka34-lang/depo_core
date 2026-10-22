@@ -1,0 +1,88 @@
+id: K13
+entity: reconciliation_run
+title: Запуск сверки
+note: Запуск сверки на одном срезе с сохранёнными версиями. Повтор той же команды возвращает прежний запуск; контрольный запуск — новая команда со ссылкой на прежний. При расхождении хранит акт (составляется в день сверки) и время его направления в Банк России (не позднее следующего рабочего дня) — 892-П пп.6.2–6.3.
+origin: 'КЭ1-03 § K13; Связанные UC: 047. Опора: E1-03:P00118–P00121; P00153–P00156.'
+fields:
+- name: id
+  title: Внутренний ключ этой записи
+  type: ID
+  required: Да
+  key: PK
+  note: ''
+- name: command_id
+  title: Команда запуска
+  type: ID
+  required: Да
+  key: FK → command_receipt; U2
+  note: ''
+- name: as_of
+  title: Целевой срез
+  type: Момент
+  required: Да
+  key: ''
+  note: UTC и исходная зона
+  trace: NR-892-6#6.1
+- name: cutoff_seq
+  title: Граница журнала ЦД
+  type: Порядковый номер
+  required: Да
+  key: ''
+  note: Журнал
+- name: method_version
+  title: Версия методики
+  type: Версия
+  required: Да
+  key: CD-D-16
+  note: ''
+- name: state
+  title: Состояние этого объекта
+  type: Код
+  required: Да
+  key: 'Коды: STARTED/COMPLETE/INCOMPLETE'
+  note: переходы — STATES
+- name: recorded_at
+  title: Запуск
+  type: Момент
+  required: Да
+  key: ''
+  note: UTC и исходная зона
+- name: previous_run_id
+  title: Предыдущий запуск
+  type: ID
+  required: Нет
+  key: FK → reconciliation_run
+  note: Без циклов; прежний запуск сохраняется
+- name: expected_scope
+  title: Ожидаемый набор контекстов
+  type: Структурированный снимок
+  required: Да; custody-T01; account-T01
+  key: ''
+  note: Выпуск/место и все применимые счета; Ровно одна итоговая строка каждого контекста; пустой/неполный набор не COMPLETE
+- name: run_kind
+  title: Вид запуска
+  type: Код
+  required: Да
+  key: 'Коды: DAILY/INITIAL_LINK/REPEAT'
+  trace: DEC-2026-10-22-02
+  note: 'INITIAL_LINK — первичная сверка при привязке выпуска (UC-033): один выпуск, один счёт N, момент из выписки ОИС'
+- name: discrepancy_act_evidence_id
+  title: Акт о расхождениях
+  type: ID
+  required: При расхождении
+  key: FK → evidence
+  trace: NR-892-6#6.2
+  note: 'составляется в день сверки: активы, количество, причины'
+- name: act_sent_at
+  title: Направление акта в Банк России
+  type: Момент
+  required: При расхождении
+  trace: NR-892-6#6.3
+  note: не позднее рабочего дня, следующего за днём сверки; формат и канал — UC-047
+links:
+- id: L35
+  link: command_id → command_receipt.id; к родителю 1, обратно 0..1
+  required: Да
+- id: L36
+  link: previous_run_id → reconciliation_run.id; к родителю 0..1, обратно 0..N
+  required: Нет

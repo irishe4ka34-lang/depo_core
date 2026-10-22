@@ -1,0 +1,47 @@
+id: K06
+entity: account_section
+title: Раздел счёта
+note: 'Необязательное обособление внутри счёта (892-П п.7.5). Отсутствие раздела — явное значение, а не фиктивный раздел. Раздел под посредника не используется: на пару «клиент + посредник» открывается отдельный счёт (REV-R20); вопрос OD-13 закрыт.'
+origin: 'КЭ1-03 § K06; Связанные UC: 029,033. Опора: E1-03:P00021; P00066–P00069; P00198–P00209.'
+fields:
+- name: id
+  title: Внутренний ключ этой записи
+  type: ID
+  required: Да
+  key: PK
+  note: ''
+- name: account_id
+  title: Родительский счёт
+  type: ID
+  required: Да
+  key: FK → account
+  note: ''
+- name: code
+  title: Код раздела
+  type: Код
+  required: Да
+  key: U1 с account_id; CD-D-08
+  note: ''
+  trace: NR-892-9#7.5
+- name: purpose
+  title: Назначение режима
+  type: Код
+  required: Да
+  key: ''
+  note: Утверждённый профиль
+- name: state
+  title: Состояние этого объекта
+  type: Код
+  required: Да
+  key: 'Коды: OPEN/SUSPENDED'
+  note: переходы — STATES
+- name: opened_at
+  title: Начало действия
+  type: Момент
+  required: Да
+  key: ''
+  note: UTC и исходная зона
+links:
+- id: L09
+  link: account_id → account.id; к родителю 1, обратно 0..N
+  required: Да

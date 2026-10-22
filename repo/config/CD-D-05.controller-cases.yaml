@@ -1,0 +1,11 @@
+id: CFG-CD-D-05
+title: Случаи, требующие контролёра при открытии счёта
+version: 2026-10-21.1
+rule: REV-R22
+cases:
+  - {code: SERVICE_ACCOUNT,   when: "kind_code in [NCA, CPA, XX, XY]"}
+  - {code: MANUAL_ENTRY,      when: "request.channel in [PAPER, EMAIL, OTHER]"}
+  - {code: T_OR_N,            when: "kind_code in [T, N]"}
+  - {code: NONSTANDARD_POA,   when: "request.poa_form != APPROVED_FORM"}
+  - {code: DUPLICATE,         when: "duplicate_of is not null"}
+  - {code: HIGH_RISK,         when: "party.risk_level == HIGH"}

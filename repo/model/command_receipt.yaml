@@ -1,0 +1,72 @@
+id: K18
+entity: command_receipt
+title: Регистрация команды и повтора
+note: 'Регистрация команды: исходный ключ, содержание и однозначный результат. Под прежним ключом содержание не меняется; повтор возвращает сохранённый ответ. Пакет заявок посредника — общий batch_id, у каждой заявки свой ключ (REV-R24).'
+origin: 'КЭ1-03 § K18; Связанные UC: 029,032,037,047,056. Опора: E1-03:P00020; P00131; P00138–P00140.'
+fields:
+- name: id
+  title: Внутренний ключ этой записи
+  type: ID
+  required: Да
+  key: PK
+  note: ''
+- name: scope
+  title: Область ключа
+  type: Текст
+  required: Да
+  key: U1 с request_key; MODEL-Q03
+  note: Источник + действие + субъект
+- name: request_key
+  title: Ключ повтора
+  type: ID
+  required: Да
+  key: U1
+  note: Инициатор
+- name: action
+  title: Действие
+  type: Код
+  required: Да
+  key: ''
+  note: Профиль API
+- name: canonical_payload_hash
+  title: Отпечаток канонического содержания
+  type: Хэш
+  required: Да
+  key: ''
+  note: Алгоритм/канонизация MODEL-Q03; другое содержимое под тем же ключом — конфликт
+- name: actor_ref
+  title: Инициатор
+  type: Внешняя ссылка IAM
+  required: Да
+  key: ''
+  note: Источник + ID; не идентичность депонента
+- name: correlation_id
+  title: ID корреляции
+  type: ID
+  required: Да
+  key: ''
+  note: Не использовать вместо request_key
+- name: state
+  title: Состояние этого объекта
+  type: Код
+  required: Да
+  key: 'Коды: RECEIVED/IN_PROGRESS/SUCCEEDED/FAILED/UNKNOWN'
+  note: переходы — STATES
+- name: result_locator
+  title: Тип и ID результата
+  type: Типизированная ссылка
+  required: После результата
+  key: ''
+  note: account/operation/run/statement/external_operation; Не SQL FK; проверяется по разрешённому типу и наличию объекта
+- name: received_at
+  title: Приём команды
+  type: Момент
+  required: Да
+  key: ''
+  note: UTC и исходная зона
+- name: batch_id
+  title: Пакет заявок
+  type: ID
+  required: Нет
+  key: ''
+  note: один на пакет посредника; Группирует заявки пакета; у каждой заявки свой request_key (REV-R24)

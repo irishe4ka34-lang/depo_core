@@ -1,0 +1,54 @@
+id: K22
+entity: reservation
+title: Резерв
+note: Локальное удержание количества под конкретное внешнее поручение расхода или перевода. Создаётся в T5, завершается в T6 или снимается по доказанному отказу; по тайм-ауту не снимается. Не равен статусу RESERVING и обособлению TO у РЦД — они сравниваются в K14. Цель — профиль РЦД.
+origin: КЭ1-03 § K22
+fields:
+- name: id
+  title: Внутренний ключ резерва
+  type: ID
+  required: Да
+  key: PK
+  note: ''
+- name: account_id
+  title: Счёт
+  type: ID
+  required: Да
+  key: FK → account
+  note: ''
+- name: instrument_id
+  title: Выпуск
+  type: ID
+  required: Да
+  key: FK → instrument_version
+  note: Тот же контекст, что у позиции счёта
+- name: custody_link_id
+  title: Место учёта
+  type: ID
+  required: Да
+  key: FK → custody_link
+  note: Тот же контекст, что у позиции счёта
+- name: quantity
+  title: Количество
+  type: Количество
+  required: Да
+  key: ''
+  note: '> 0; Не больше доступного на момент T5'
+- name: purpose_operation_id
+  title: Поручение
+  type: ID
+  required: Да
+  key: FK → external_operation
+  note: Поручение, ради которого создан резерв
+- name: state
+  title: Состояние
+  type: Код
+  required: Да
+  key: ''
+  note: ACTIVE/CONSUMED/RELEASED; Переходы по STATES
+- name: closed_by_operation_id
+  title: Завершение
+  type: ID
+  required: При CONSUMED/RELEASED
+  key: FK → accounting_operation
+  note: Связь с исходом поручения

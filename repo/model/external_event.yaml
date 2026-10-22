@@ -1,0 +1,89 @@
+id: K10
+entity: external_event
+title: Принятое внешнее событие
+note: 'Сохранённое сообщение ОИС и результат его проверки. Приём не равен проведению; исходное содержимое неизменно, история обработки — в аудите. Повторы распознаются по источнику и ID события. У РЦД событие — сохранённый ответ на опрос статуса: ID = receiptId + updateNo; неизвестный код статуса → QUARANTINED.'
+origin: 'КЭ1-03 § K10; Связанные UC: 046,037. Опора: E1-03:P00133–P00139; P01127–P01162.'
+fields:
+- name: id
+  title: Внутренний ключ этой записи
+  type: ID
+  required: Да
+  key: PK
+  note: ''
+- name: source_system
+  title: Отправитель
+  type: Код
+  required: Да
+  key: U1 с event_id; CD-D-27
+  note: ''
+- name: event_id
+  title: ID события отправителя
+  type: ID
+  required: Да
+  key: U1
+  note: ОИС
+- name: schema_version
+  title: Версия схемы
+  type: Версия
+  required: Да
+  key: ''
+  note: Конверт сообщения. Неподдерживаемая версия не проводится
+- name: external_operation_key
+  title: Бизнес ID операции ОИС
+  type: ID
+  required: До проведения зачисления
+  key: ''
+  note: ОИС. Для CREDIT обязателен стабильный ID внешнего эффекта; отсутствие запрещает POSTED
+- name: occurred_at
+  title: Момент события ОИС
+  type: Момент
+  required: Если указан источником
+  key: ''
+  note: UTC и исходная зона
+- name: received_at
+  title: Приём в ЦД
+  type: Момент
+  required: Да
+  key: ''
+  note: UTC и исходная зона
+- name: instrument_id
+  title: Сопоставленный выпуск
+  type: ID
+  required: После успешного сопоставления
+  key: FK → instrument_version
+  note: ''
+- name: custody_link_id
+  title: Сопоставленная связь
+  type: ID
+  required: После успешного сопоставления
+  key: FK → custody_link
+  note: ''
+- name: state
+  title: Состояние этого объекта
+  type: Код
+  required: Да
+  key: 'Коды: RECEIVED/QUARANTINED/VALIDATED/PROCESSED'
+  note: переходы — STATES
+- name: correlation_id
+  title: Корреляция обмена
+  type: ID
+  required: Если передана
+  key: ''
+  note: Не является ключом однократности
+- name: evidence_id
+  title: Доказательство основания или результата
+  type: ID
+  required: Да
+  key: FK → evidence
+  note: ''
+  trace: NR-892-11#11.7
+links:
+- id: L26
+  link: instrument_id → instrument_version.id; к родителю 0..1, обратно 0..N
+  required: После успешного сопоставления
+- id: L27
+  link: custody_link_id → custody_link.id; к родителю 0..1, обратно 0..N
+  required: После успешного сопоставления
+- id: L28
+  link: evidence_id → evidence.id; к родителю 1, обратно 0..N
+  required: Да

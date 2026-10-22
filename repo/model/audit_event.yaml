@@ -1,0 +1,69 @@
+id: K19
+entity: audit_event
+title: Событие аудита
+note: Неизменяемый след доступа, решения, перехода и результата; только добавление. Хранит, кто внёс запись или что запись внесена автоматически (892-П п.1.9). Журнал количеств не заменяет.
+origin: 'КЭ1-03 § K19; Связанные UC: все Э1. Опора: E1-00:P00012; E1-03:P00126–P00129; P00141–P00142.'
+fields:
+- name: id
+  title: Внутренний ключ этой записи
+  type: ID
+  required: Да
+  key: PK
+  note: ''
+- name: command_id
+  title: Команда
+  type: ID
+  required: Если событие связано с командой
+  key: FK → command_receipt
+  note: ''
+- name: subject_locator
+  title: Тип и ID предметного объекта
+  type: Типизированная ссылка
+  required: Да
+  key: ''
+  note: Сущности этой модели; внешние явно с namespace; Разрешённый тип и существующий объект; без произвольных URL
+- name: actor_ref
+  title: Исполнитель
+  type: Внешняя ссылка IAM
+  required: Да
+  key: ''
+  note: ''
+  trace: NR-892-1#1.8
+- name: event_kind
+  title: Действие аудита
+  type: Код
+  required: Да
+  key: CD-D-05/11/26
+  note: ''
+- name: before_after
+  title: Прежнее и новое значения
+  type: Структурированный снимок
+  required: Для изменения
+  key: ''
+  note: Без секретов и реальных персональных данных; сохраняет версию
+  trace: NR-892-4#4.2
+- name: authorization_context
+  title: Результат проверки прав
+  type: Версионированный снимок
+  required: Да; decision=DENY
+  key: ''
+  note: Объект, действие, основание, роль, решение и применённая версия
+- name: recorded_at
+  title: Фиксация аудита
+  type: Момент
+  required: Да
+  key: ''
+  note: UTC и исходная зона
+- name: evidence_id
+  title: Доказательство основания или результата
+  type: ID
+  required: Если имеется внешнее основание
+  key: FK → evidence
+  note: ''
+links:
+- id: L53
+  link: command_id → command_receipt.id; к родителю 0..1, обратно 0..N
+  required: Если событие связано с командой
+- id: L54
+  link: evidence_id → evidence.id; к родителю 0..1, обратно 0..N
+  required: Если имеется внешнее основание

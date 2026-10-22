@@ -1,0 +1,57 @@
+id: CFG-CD-D-11
+title: Состояния и переходы по типу объекта
+version: структура; значения не заданы
+note: 'Отдельная машина состояний у каждого объекта: счёт, связь со счётом N, событие, внешняя операция, команда, сверка, выписка, дело. Переходы и условия — правило STATES; полный набор условий — вопрос MODEL-Q05. Статусы счёта соответствуют реестру счетов 892-П п.4.2.'
+origin: КЭ1-03 § CD-D-11
+fields:
+- name: object_type
+  type: Code
+  note: тип объекта
+- name: from_state
+  type: Code
+- name: to_state
+  type: Code
+- name: trigger
+  type: Code
+  note: событие или шаг
+- name: actor_rule
+  type: Predicate
+  note: кто вправе
+- name: guard
+  type: Predicate
+  note: проверяемое условие
+- name: effect_or_refusal
+  type: Rule
+  note: эффект или отказ
+- name: version
+  type: Version
+- name: account.state
+  type: OPEN/SUSPENDED/CLOSED
+  note: '892-П п.4.2: открыт, приостановлен, возобновлён (SUSPENDED → OPEN), закрыт'
+- name: custody_link.state
+  type: UNVERIFIED/READY/SUSPENDED
+- name: account_section.state
+  type: OPEN/SUSPENDED
+- name: instrument_version.state
+  type: NEEDS_REVIEW/MAPPED
+- name: accounting_operation.state
+  type: POSTED
+  note: создаётся сразу проведённой
+- name: external_event.state
+  type: RECEIVED/VALIDATED/QUARANTINED/PROCESSED
+- name: external_operation.state
+  type: DRAFT/PREPARED/PENDING/UNKNOWN/CONFIRMED/REJECTED
+  note: DRAFT и PREPARED — заявление на открытие счёта N (UC-032)
+- name: command_receipt.state
+  type: RECEIVED/IN_PROGRESS/SUCCEEDED/FAILED/UNKNOWN
+- name: reconciliation_run.state
+  type: STARTED/COMPLETE/INCOMPLETE
+- name: reconciliation_item.state
+  type: MATCH/MISMATCH/UNDETERMINED
+- name: discrepancy_case.state
+  type: OPEN/INVESTIGATING/CLOSED
+  note: CLOSED — по R-009
+- name: statement.state
+  type: BUILDING/ISSUED/FAILED
+- name: external_snapshot.completeness
+  type: COMPLETE/INCOMPLETE/UNKNOWN

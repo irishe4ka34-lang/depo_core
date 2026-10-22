@@ -1,0 +1,52 @@
+id: K20
+entity: protection_version
+title: Версия защитного режима
+note: 'Версия защитного режима: охват запретов, проверяемый до эффекта. Содержимое версии неизменно; активация и подтверждение на путях исполнения журналируются. Публикация версии не доказывает действие защиты. Матрица режимов — OD-14, MODEL-Q08.'
+origin: 'КЭ1-03 § K20; Связанные UC: 069,070. Опора: E1-03:P01010–P01013; RV2-05:P00625; P00635.'
+fields:
+- name: id
+  title: Внутренний ключ этой записи
+  type: ID
+  required: Да
+  key: PK
+  note: ''
+- name: scope
+  title: Охват защиты
+  type: Структурированный набор
+  required: Да; CREDIT
+  key: MODEL-Q08
+  note: Система/выпуск/место/действие; Однозначное сопоставление команде
+- name: version
+  title: Версия политики
+  type: Версия
+  required: Да
+  key: U1 с scope
+  note: ''
+- name: policy_ref
+  title: Матрица безопасных действий
+  type: Версионированная внешняя ссылка
+  required: Да
+  key: CD-D-24; OD-14
+  note: Матрица применяется только в утверждённой версии
+- name: effective_from
+  title: Начало применимости
+  type: Момент
+  required: Да
+  key: ''
+  note: UTC и исходная зона
+- name: activation_proof
+  title: Доказательство применения
+  type: Структурированный снимок
+  required: До признания действующей; applied=v1
+  key: ''
+  note: При неподтверждённой версии эффект запрещён
+- name: evidence_id
+  title: Доказательство основания или результата
+  type: ID
+  required: Да
+  key: FK → evidence
+  note: ''
+links:
+- id: L55
+  link: evidence_id → evidence.id; к родителю 1, обратно 0..N
+  required: Да

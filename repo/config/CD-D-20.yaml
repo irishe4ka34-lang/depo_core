@@ -1,0 +1,27 @@
+id: CFG-CD-D-20
+title: Выписки и отчёты
+version: структура; значения не заданы
+note: Виды документов, поля, срезы и права адресата. Выписка на дату — на конец операционного дня; на произвольный момент — только по договору и с оговоркой о целях (892-П п.14.1). Отчёт об операции — не позднее следующего рабочего дня (п.14.2). Третьим лицам — по письменному указанию депонента (п.14.5). Форматы, подпись и канал — вопрос OD-05.
+origin: КЭ1-03 § CD-D-20
+fields:
+- name: document_kind
+  type: Code
+  note: выписка на дату / на момент / за период; отчёт об операции; справка
+- name: format
+  type: Code
+- name: period_cut_rule
+  type: Rule
+  note: END_OF_DAY, AT_MOMENT, PERIOD
+- name: purpose_disclaimer
+  type: Text
+  note: обязательная оговорка для AT_MOMENT
+- name: field_source_schema
+  type: Schema
+- name: recipient_masking_policy
+  type: Policy
+- name: signature_hash_issue_policy
+  type: Policy
+- name: statement_line.line_kind
+  type: MOVEMENT/BALANCE
+- name: statement_line.balance_role
+  type: OPENING/CLOSING

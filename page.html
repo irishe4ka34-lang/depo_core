@@ -1,0 +1,310 @@
+<title>Пилот docs-as-code</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+[hidden]{display:none!important}
+:root{
+  --bg:#f6f7f5; --surface:#ffffff; --sunk:#eef1ee; --fg:#1d2422; --muted:#5d6864; --line:#d9dfdb;
+  --core:#0f6e64; --core-bg:#e3f2ef;
+  --norm:#8a5a00; --norm-bg:#fbf0d9;
+  --rule:#0f6e64; --rule-bg:#e3f2ef;
+  --cfg:#6750a4; --cfg-bg:#efeaf8;
+  --model:#24578f; --model-bg:#e6eef8;
+  --dec:#5d6864; --dec-bg:#eceeed;
+  --q:#a3361f; --q-bg:#fbe9e4;
+  --arch:#7a4f1e; --arch-bg:#f5ebdf; --guide:#4a5a7a; --guide-bg:#e8ecf4; --warn:#9a5b00; --warn-bg:#fff4dc;
+  --focus:#0f6e64;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#141917; --surface:#1b2120; --sunk:#222a28; --fg:#e4ebe8; --muted:#9aa7a2; --line:#2f3a37;
+  --core:#5cc4b6; --core-bg:#16302c;
+  --norm:#e7b65a; --norm-bg:#33280f; --rule:#5cc4b6; --rule-bg:#16302c;
+  --cfg:#b9a5ee; --cfg-bg:#2a2340; --model:#86b3ea; --model-bg:#18283b; --dec:#aab5b1; --dec-bg:#262d2b; --q:#f09a83; --q-bg:#3a201a; --arch:#e0b583; --arch-bg:#33261a; --guide:#a9b8d6; --guide-bg:#1f2533; --warn:#f0c46a; --warn-bg:#3a2e12; --focus:#5cc4b6; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141917; --surface:#1b2120; --sunk:#222a28; --fg:#e4ebe8; --muted:#9aa7a2; --line:#2f3a37;
+  --core:#5cc4b6; --core-bg:#16302c;
+  --norm:#e7b65a; --norm-bg:#33280f; --rule:#5cc4b6; --rule-bg:#16302c;
+  --cfg:#b9a5ee; --cfg-bg:#2a2340; --model:#86b3ea; --model-bg:#18283b; --dec:#aab5b1; --dec-bg:#262d2b; --q:#f09a83; --q-bg:#3a201a; --arch:#e0b583; --arch-bg:#33261a; --guide:#a9b8d6; --guide-bg:#1f2533; --warn:#f0c46a; --warn-bg:#3a2e12; --focus:#5cc4b6; color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.6 "IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
+code,.mono{font-family:"IBM Plex Mono",ui-monospace,Consolas,monospace;font-size:.88em}
+.wrap{max-width:1100px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header.top{background:var(--surface);border-bottom:1px solid var(--line)}
+header.top .wrap{padding-block:22px 14px}
+.eyebrow{font:500 12px/1 "IBM Plex Mono",monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+h1{font-size:26px;line-height:1.25;margin:6px 0 8px;text-wrap:balance}
+.lead{color:var(--muted);max-width:70ch;margin:0}
+nav.tabs{display:flex;gap:4px;flex-wrap:wrap;margin-top:16px}
+nav.tabs a{padding:6px 12px;border-radius:6px;color:var(--fg);text-decoration:none;font-size:14px;border:1px solid var(--line);background:var(--bg)}
+nav.tabs a:hover{border-color:var(--core)}
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:18px 0 6px}
+.bar button{font:inherit;font-size:13px;padding:5px 10px;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--fg);cursor:pointer}
+.legend{display:flex;gap:10px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+.legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px;background:var(--c)}
+main section{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 22px 18px;margin:16px 0}
+main h2{font-size:19px;margin:18px 0 8px}
+main h3{font-size:16px;margin:18px 0 6px;color:var(--core)}
+#uc h2{border-top:1px solid var(--line);padding-top:14px}
+#uc h2:first-child{border-top:0}
+#uc p,#uc li{max-width:78ch}
+.ref{font:inherit;display:inline-flex;align-items:baseline;gap:6px;border:1px solid transparent;background:var(--b);color:var(--fg);border-radius:5px;padding:0 6px;margin:0 1px;cursor:pointer;line-height:1.5;text-align:left}
+.ref .rid{font:500 12px "IBM Plex Mono",monospace;color:var(--c)}
+.ref .rl{font-size:13px;color:var(--muted)}
+.ref:hover,.ref[aria-expanded="true"]{border-color:var(--c)}
+.ref:focus-visible{outline:2px solid var(--focus);outline-offset:1px}
+.k-Норма{--c:var(--norm);--b:var(--norm-bg)} .k-Правило{--c:var(--rule);--b:var(--rule-bg)}
+.k-Настройка{--c:var(--cfg);--b:var(--cfg-bg)} .k-Модель{--c:var(--model);--b:var(--model-bg)} .k-Решение{--c:var(--dec);--b:var(--dec-bg)} .k-Вопрос{--c:var(--q);--b:var(--q-bg)} .k-Архитектура{--c:var(--arch);--b:var(--arch-bg)} .k-Справка{--c:var(--guide);--b:var(--guide-bg)} .k-Сценарий{--c:var(--core);--b:var(--core-bg)}
+.rv{border:1px solid var(--warn);background:var(--warn-bg);border-radius:6px;padding:6px 10px;margin:4px 0 8px;font-size:13px}.rv b{color:var(--warn)}.rv ul{margin:2px 0 0;padding-left:18px}
+.cat h3{margin:14px 0 4px}.cat ul{list-style:none;padding:0;margin:0}.cat li{margin:2px 0;font-size:13px;break-inside:avoid}.cat .st{color:var(--muted);font-size:12px}.cat .fl{color:var(--warn);font-size:12px}
+.ref.alias{padding:0 4px;margin:0}
+.ref.alias .rid{font:inherit;font-size:inherit;color:var(--c);text-decoration:underline dotted;text-underline-offset:3px}
+.ref.ext{--c:var(--muted);--b:var(--sunk);cursor:default}
+.panel{border-left:3px solid var(--c);background:var(--sunk);border-radius:0 8px 8px 0;padding:10px 14px 6px;margin:8px 0 12px;font-size:14px;max-width:100%}
+.panel p,.panel li,.panel .sum{max-width:86ch}
+.panel .ph{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.panel .kb{font:500 11px "IBM Plex Mono",monospace;text-transform:uppercase;letter-spacing:.06em;color:var(--c)}
+.panel .pt{font-weight:600}
+.panel .close{margin-left:auto;background:none;border:0;color:var(--muted);cursor:pointer;font:inherit;font-size:13px}
+.panel .meta{font-size:12px;color:var(--muted);margin:2px 0 6px}
+.panel .sum{margin:4px 0 8px;font-weight:500}
+.panel table,.tbl{border-collapse:collapse;font-size:13px;margin:6px 0 10px}
+.panel th,.panel td,.tbl th,.tbl td{border:1px solid var(--line);padding:4px 8px;vertical-align:top;text-align:left}
+.panel th,.tbl th{background:var(--surface);font-weight:600}
+.tw{overflow-x:auto;max-width:100%}
+#uc table,#qs table,.panel table{display:block;overflow-x:auto;max-width:100%}
+#uc svg{height:auto}
+#uc details,.panel details{border:1px solid var(--line);border-radius:8px;padding:6px 12px;margin:8px 0;background:var(--bg)}
+#uc details summary,.panel details summary{cursor:pointer;color:var(--core);font-size:14px}
+#uc details[open] summary{margin-bottom:6px}
+.tbl td .ref{margin:1px 0}
+.scen{border:1px solid var(--line);border-radius:8px;padding:10px 14px;margin:10px 0;background:var(--bg)}
+.scen pre{margin:6px 0 0;white-space:pre-wrap;font:13px/1.55 "IBM Plex Mono",monospace;color:var(--fg)}
+.tags{display:flex;gap:4px;flex-wrap:wrap}
+.ucs{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0 2px}
+.ucs button{font:inherit;font-size:14px;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--bg);color:var(--fg);cursor:pointer}
+.ucs button[aria-selected="true"]{background:var(--core);border-color:var(--core);color:var(--surface)}
+.files{columns:2 260px;font:13px/1.8 "IBM Plex Mono",monospace;padding-left:18px}
+.how{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.how div{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--bg);font-size:14px}
+.how b{display:block;margin-bottom:2px}
+#qs details{margin-top:10px} #qs summary{cursor:pointer;color:var(--core);font-size:14px}
+.qclosed{color:var(--muted)}
+
+/* атлас */
+.atl-btn{font:inherit;font-size:14px;padding:6px 12px;border-radius:999px;border:1px solid var(--core);background:var(--core-bg);color:var(--fg);cursor:pointer;font-weight:600}
+.atl-btn[aria-selected="true"]{background:var(--core);color:var(--surface)}
+#atlas h2{margin-top:6px}
+#atlas .cap{max-width:86ch;color:var(--muted);font-size:13px;margin:8px 0 0}
+#atlas .scroll{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px;max-width:100%}
+#atlas .scroll svg{display:block;height:auto}
+#chain{min-width:1000px;width:100%}
+.picker{display:flex;flex-direction:column;gap:10px;margin:6px 0 14px}
+.grp{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:baseline}
+.grp>span{font-size:12px;color:var(--muted);letter-spacing:.03em;text-transform:uppercase;min-width:170px}
+.pick{font:13px "IBM Plex Mono",monospace;color:var(--fg);background:var(--surface);border:1px solid var(--line);border-radius:5px;padding:3px 9px;cursor:pointer}
+.pick[aria-pressed="true"]{background:var(--core-bg);border-color:var(--core);font-weight:600}
+.pick:focus-visible,g.hit:focus-visible,g.cnode:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.avhead{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:baseline;margin-bottom:8px}
+.avhead h3{margin:0;color:var(--fg);font-size:17px}
+.avhead .st{font-size:12px;color:var(--muted)}
+.pass{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px 22px;margin-bottom:12px}
+.pass>div{min-width:0;font-size:14px}
+.pass h4,.two-notes h4{margin:0 0 2px;font-size:12px;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+.pass p{margin:0 0 4px}
+.two-notes{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px 22px;margin-bottom:12px}
+.two-notes>div{border-left:3px solid var(--line);padding:2px 0 2px 12px;font-size:14px;min-width:0}
+.two-notes>div.in{border-color:var(--core)}
+.adetail{margin-top:12px;background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--core);border-radius:6px;padding:10px 14px;font-size:14px}
+.adetail.alt{border-left-color:var(--norm)}.adetail.err{border-left-color:var(--q)}
+.adetail .k{font:600 13px "IBM Plex Mono",monospace;margin-bottom:4px}
+.adetail.alt .k{color:var(--norm)}.adetail.err .k{color:var(--q)}
+.adetail p{margin:4px 0;max-width:96ch}
+.alegend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:12px;color:var(--muted);margin:8px 0 0}
+.alegend i{display:inline-block;width:13px;height:13px;border-radius:2px;border:1.5px solid;vertical-align:-2px;margin-right:6px}
+.lane-l{font:600 12px "IBM Plex Sans",sans-serif;fill:var(--fg)}
+.lane-b1{fill:var(--sunk)}.lane-b2{fill:var(--surface)}
+.lane-ln{stroke:var(--line)}
+.stepbox{fill:var(--surface);stroke:var(--line);stroke-width:1.3}
+.stepbox.main{stroke:var(--core)}
+g.hit{cursor:pointer}
+g.hit.on .stepbox,g.hit.on .brbox{stroke-width:3;stroke:var(--core)}
+.sn{font:600 12px "IBM Plex Mono",monospace;fill:var(--fg)}
+.sl{font:12px "IBM Plex Sans",sans-serif;fill:var(--fg)}
+.sc{font:500 10.5px "IBM Plex Mono",monospace;fill:var(--muted)}
+.arr{fill:none;stroke:var(--fg);stroke-width:1.5}
+.mk{fill:none;stroke:var(--fg);stroke-width:1.5}
+.conn{fill:none;stroke:var(--line);stroke-width:1.3;stroke-dasharray:4 3}
+.brbox.A{fill:var(--norm-bg);stroke:var(--norm);stroke-width:1.3}
+.brbox.E{fill:var(--q-bg);stroke:var(--q);stroke-width:1.3}
+.bt.A{font:600 12px "IBM Plex Mono",monospace;fill:var(--norm)}.bt.E{font:600 12px "IBM Plex Mono",monospace;fill:var(--q)}
+.band{font:600 12px "IBM Plex Sans",sans-serif;fill:var(--muted);letter-spacing:.04em}
+.cn{font:600 13px "IBM Plex Mono",monospace;fill:var(--fg)}
+.ct{font:12.5px "IBM Plex Sans",sans-serif;fill:var(--fg)}
+.cm{font:11.5px "IBM Plex Sans",sans-serif;fill:var(--muted)}
+.stage{fill:var(--sunk);stroke:var(--line)}
+.stl{font:600 11.5px "IBM Plex Mono",monospace;fill:var(--muted);letter-spacing:.04em}
+.node{fill:var(--surface);stroke:var(--line);stroke-width:1.3}
+g.cnode{cursor:pointer}
+g.cnode:hover .node,g.cnode.on .node{stroke:var(--core);stroke-width:2.4}
+footer{color:var(--muted);font-size:12px;padding-block:8px 28px}
+@media (max-width:600px){main section{padding:4px 14px 14px} h1{font-size:22px} .ref .rl{display:none}}
+</style>
+
+<header class="top"><div class="wrap">
+  <div class="eyebrow">Пилот docs-as-code · развёрнутый вид</div>
+  <div class="ucs"><button class="atl-btn" id="atlbtn" aria-selected="false">Атлас сценариев</button></div>
+  <div class="ucs" id="ucs" role="tablist"></div>
+  <h1 id="ttl"></h1>
+  <p class="lead" id="sum"></p>
+  <nav class="tabs" id="uctabs"><a href="#uc">Сценарий</a><a href="#trace">Трассировка</a><a href="#acc">Приёмка</a><a href="#qs">Вопросы</a><a href="#cat">Каталог</a><a href="#how">Как устроено</a><a href="#files">Файлы</a></nav>
+</div></header>
+
+<main class="wrap">
+  <section id="atlas" hidden>
+    <h2>Основная цепочка</h2>
+    <div class="scroll"><svg id="chain" role="img" aria-label="Цепочка сценариев по этапам: выпуск, счёт депонента, внешний счёт, событие и зачисление, сверка, выписка и статус"></svg></div>
+    <p class="cap">UC-027 → UC-029 → UC-032/033 → UC-046/037 → UC-047 → UC-056/057. Сценарии в одной колонке стоят рядом, но не обязательно выполняются один за другим. «Требует» — из предусловий сценария. Нажмите карточку, чтобы открыть сценарий по дорожкам.</p>
+    <h2 id="aview-h">Сценарий по дорожкам</h2>
+    <div class="picker" id="picker"></div>
+    <div id="aview"></div>
+  </section>
+  <div id="ucmode">
+  <div class="bar">
+    <button id="openAll">Раскрыть все ссылки</button><button id="closeAll">Свернуть</button>
+    <div class="legend"><span style="--c:var(--norm)">норма</span><span style="--c:var(--rule)">правило</span><span style="--c:var(--cfg)">настройка</span><span style="--c:var(--model)">модель</span><span style="--c:var(--dec)">решение</span><span style="--c:var(--q)">вопрос</span><span style="--c:var(--arch)">архитектура</span><span style="--c:var(--guide)">справка</span></div>
+  </div>
+  <section id="uc"></section>
+  <section id="trace"><h2>Трассировка: норма → правило → поле → шаг → проверка</h2>
+    <p class="lead">Таблица собрана автоматически из ссылок в источниках — её не нужно вести руками.</p>
+    <div class="tw"><table class="tbl" id="tt"><thead><tr><th>Норма</th><th>Правила</th><th>Поля модели</th><th>Шаги UC</th><th>Проверки приёмки</th></tr></thead><tbody></tbody></table></div>
+  </section>
+  <section id="acc"><h2>Приёмка (Gherkin)</h2><p class="lead">Файл <code id="featf"></code>: из него же генерируются автотесты. Теги связывают проверку с правилом и нормой.</p><div id="sc"></div></section>
+  <section id="qs"><h2>Открытые вопросы</h2><p class="lead">Реестр <code>questions/</code>: у каждого вопроса — что решить, кто решает и что действует до решения. Сначала — вопросы этого сценария.</p>
+    <div class="tw"><table class="tbl" id="qt"><thead><tr><th>Вопрос</th><th>Суть</th><th>Кто решает</th><th>Сценарии</th></tr></thead><tbody></tbody></table></div>
+    <details id="qall"><summary></summary><div class="tw"><table class="tbl"><thead><tr><th>Вопрос</th><th>Суть</th><th>Статус</th><th>Сценарии</th></tr></thead><tbody></tbody></table></div></details>
+  </section>
+  <section id="cat"><h2>Каталог всех файлов</h2><p class="lead">Всё, что есть в пилоте, по видам. Пометка «ревью» — в файле есть замечания предварительного ревью; они показываются в раскрытой карточке.</p><div class="cat" id="catl"></div></section>
+  <section id="how"><h2>Как устроено</h2>
+    <div class="how">
+      <div><b>Один факт — один файл</b>Норма, правило, решение, поле, настройка хранятся отдельно и ссылаются друг на друга через <code>[[ID#пункт]]</code>.</div>
+      <div><b>Нормы → требования</b>Закон переводится в выжимку один раз: конкретные поля, сроки, форматы, с пунктом и датой сверки. Правила ссылаются на выжимку, а не «смотри закон».</div>
+      <div><b>Читаем развёрнуто</b>Эта страница собирается скриптом: любая ссылка раскрывается на месте, вложенные — тоже. Ничего не копируется руками.</div>
+      <div><b>Настройки — это данные</b><code>config/*.yaml</code> проходит ревью и загружается в ядро как есть: документация и продукт не расходятся.</div>
+      <div><b>Решения отдельно</b>Решения — в <code>decisions/</code>; текст сценариев и правил правится на месте, история — в Git.</div>
+      <div><b>Вопросы — тоже файлы</b>Открытый вопрос лежит в <code>questions/</code>: что решить, кто решает, что действует до решения. Закрыли — ставим статус и ссылку на решение.</div>
+      <div><b>Проверка ссылок</b>Сборка падает, если ссылка ведёт в несуществующий файл или пункт.</div>
+    </div>
+  </section>
+  <section id="files"><h2>Файлы пилота</h2><ul class="files" id="fl"></ul></section>
+  </div>
+</main>
+<footer class="wrap">Источники: 115-ФЗ (ред. 04.08.2026), 282-ФЗ, 892-П от 11.09.2026 (на регистрации), компактная редакция ЦД 1.4.</footer>
+
+<script>
+/*DATA*/
+const $=s=>document.querySelector(s);
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+function chip(key){const e=DATA.PAY[key];if(!e)return '<span class="ref ext">'+esc(key)+'</span>';
+  const [id,anc]=key.split('#');const short=id+(anc?(/^\d/.test(anc)?' п.'+anc:' · '+(e.title.split(' — ').slice(-1)[0]).toLowerCase()):'');
+  return `<button class="ref k-${e.kind}" data-ref="${esc(key)}" aria-expanded="false"><span class="rid">${esc(short)}</span></button>`}
+function host(btn){let el=btn.parentElement;while(el&&!/^(P|LI|TD|DIV|SECTION)$/.test(el.tagName))el=el.parentElement;
+  if(el&&el.tagName==='DIV'&&el.classList.contains('panel'))return btn; return el||btn}
+function toggle(btn){
+  const key=btn.dataset.ref,e=DATA.PAY[key];if(!e)return;
+  if(btn._panel){btn._panel.remove();btn._panel=null;btn.setAttribute('aria-expanded','false');return}
+  const p=document.createElement('div');p.className='panel k-'+e.kind;
+  const m=e.meta||{};const meta=[m.source,m.checked&&('сверено '+m.checked),m.status,m.owner&&('владелец: '+m.owner),m.version&&('версия '+m.version),m.date,'файл: '+e.file].filter(Boolean).map(esc).join(' · ');
+  p.innerHTML=`<div class="ph"><span class="kb">${esc(e.kind)}</span><span class="pt">${esc(e.title)}</span><button class="close" aria-label="Свернуть">свернуть ✕</button></div><div class="meta">${meta}</div>${(m.review&&m.review.length)?'<div class="rv"><b>Предварительное ревью</b><ul>'+m.review.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul></div>':''}${e.summary?'<div class="sum">'+esc(e.summary)+'</div>':''}<div class="tw">${e.html}</div>`;
+  p.querySelector('.close').onclick=()=>toggle(btn);
+  const h=host(btn);
+  if(h.tagName==='TD'){h.appendChild(p)}else{let after=h;while(after.nextElementSibling&&after.nextElementSibling.classList.contains('panel'))after=after.nextElementSibling;after.after(p)}
+  btn._panel=p;btn.setAttribute('aria-expanded','true');
+}
+document.addEventListener('click',ev=>{const b=ev.target.closest('button.ref');if(b)toggle(b)});
+$('#openAll').onclick=()=>document.querySelectorAll('#uc button.ref[aria-expanded="false"]').forEach(b=>{if(!b.closest('.panel'))toggle(b)});
+$('#closeAll').onclick=()=>document.querySelectorAll('button.ref[aria-expanded="true"]').forEach(b=>toggle(b));
+function show(id){
+  const U=DATA.UCS[id]; if(!U) return;
+  document.querySelectorAll('#ucs button').forEach(b=>b.setAttribute('aria-selected', b.dataset.uc===id));
+  $('#ttl').textContent=id+' · '+U.title; $('#sum').textContent=U.summary; $('#uc').innerHTML=U.html;
+  $('#featf').textContent='acceptance/'+id+'.feature';
+  $('#tt tbody').innerHTML=U.trace.map(r=>`<tr><td>${chip(r.norm)}${/#\d/.test(r.norm)||!r.norm.includes('#')?'<div style="font-size:12px;color:var(--muted)">'+esc(r.title.split(' — ').slice(-1)[0])+'</div>':''}</td><td>${r.rules.map(chip).join(' ')||'—'}</td><td class="mono">${r.fields.map(esc).join('<br>')||'—'}</td><td>${r.steps.map(esc).join(', ')||'—'}</td><td style="font-size:13px">${r.tests.map(esc).join('<br>')||'—'}</td></tr>`).join('');
+  $('#sc').innerHTML=U.scen.map(s=>`<div class="scen"><div class="tags">${s.tags.map(chip).join('')}</div><pre>${esc(s.text)}</pre></div>`).join('');
+  const qrow=(q,col)=>`<tr${q.status==='закрыт'?' class="qclosed"':''}><td>${chip(q.id)}</td><td style="font-size:13px">${esc(q.title)}</td><td style="font-size:13px">${esc(col==='s'?q.status:(q.owner||'—'))}</td><td style="font-size:13px">${q.uc.map(esc).join(', ')||'—'}</td></tr>`;
+  const mine=DATA.QS.filter(q=>q.uc.includes(id)&&q.status!=='закрыт');
+  $('#qt tbody').innerHTML=mine.map(q=>qrow(q,'o')).join('')||'<tr><td colspan="4">Открытых вопросов по сценарию нет</td></tr>';
+  try{history.replaceState(null,'','#'+id)}catch(e){}
+}
+$('#ucs').innerHTML=Object.keys(DATA.UCS).map(k=>`<button role="tab" data-uc="${k}">${k} ${esc(DATA.UCS[k].title)}</button>`).join('');
+$('#ucs').addEventListener('click',e=>{const b=e.target.closest('button[data-uc]'); if(b){hideAtlas(); show(b.dataset.uc)}});
+
+/* ---------- атлас ---------- */
+const AT=DATA.ATLAS, AB=Object.fromEntries(AT.map(u=>[u.id,u])), NS='http://www.w3.org/2000/svg';
+function sv(tag,attrs,parent,text){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(text!=null)e.textContent=text;if(parent)parent.appendChild(e);return e}
+function hh(tag,cls,html,parent){const e=document.createElement(tag);if(cls)e.className=cls;if(html!=null)e.innerHTML=html;if(parent)parent.appendChild(e);return e}
+function wrapT(t,max,lines){const w=t.split(/\s+/),o=[];let c='';for(const x of w){if((c+' '+x).trim().length>max){if(c)o.push(c);c=x}else c=(c+' '+x).trim()}if(c)o.push(c);if(lines&&o.length>lines){const r=o.slice(0,lines);r[lines-1]=r[lines-1].replace(/[\s,;.:]+$/,'').slice(0,max-1)+'…';return r}return o}
+function clipT(t,n){t=t.trim();if(t.length<=n)return t;return t.slice(0,n).replace(/\s+\S*$/,'').replace(/[\s,;:.]+$/,'')+'…'}
+function mark(svg,id){const d=sv('defs',{},svg),m=sv('marker',{id,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:8,markerHeight:8,orient:'auto'},d);sv('path',{class:'mk',d:'M1 1 L9 5 L1 9'},m)}
+const STAGES=[['Выпуск',['027']],['Счёт депонента',['029']],['Внешний счёт ЦД',['032','033']],['Событие и зачисление',['046','037']],['Сверка',['047']],['Выписка и статус',['056','057']]];
+function drawChain(){const svg=document.getElementById('chain');svg.replaceChildren();const colW=170,gap=30,nodeH=98,pad=12,top=34;
+ const W=STAGES.length*colW+(STAGES.length-1)*gap+4,H=top+2*nodeH+3*pad+8;svg.setAttribute('viewBox',`0 0 ${W} ${H}`);mark(svg,'ac');
+ STAGES.forEach((st,i)=>{const x=2+i*(colW+gap);sv('text',{class:'stl',x:x+2,y:18},svg,st[0].toUpperCase());sv('rect',{class:'stage',x,y:top,width:colW,height:H-top-4,rx:6},svg);
+  st[1].forEach((id,j)=>{const u=AB[id],y=top+pad+j*(nodeH+pad);const g=sv('g',{class:'cnode','data-id':id,tabindex:0,role:'button','aria-label':u.uc+' '+u.title},svg);
+   sv('rect',{class:'node',x:x+8,y,width:colW-16,height:nodeH,rx:4},g);sv('text',{class:'cn',x:x+18,y:y+20},g,u.uc);
+   wrapT(u.title,21,3).forEach((l,k)=>sv('text',{class:'ct',x:x+18,y:y+38+k*15},g,l));
+   const rq=u.req.filter(r=>AB[r.slice(3)]&&AB[r.slice(3)].main).map(r=>r.slice(3));
+   sv('text',{class:'cm',x:x+18,y:y+nodeH-10},g,rq.length?'требует: '+rq.join(', '):clipT(u.actor||'',22));
+   const go=()=>selectUC(id,true);g.addEventListener('click',go);g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go()}})});
+  if(i<STAGES.length-1)sv('line',{class:'arr',x1:x+colW+4,y1:H/2+8,x2:x+colW+gap-4,y2:H/2+8,'marker-end':'url(#ac)'},svg)})}
+const GROUPS=[['Основная цепочка',AT.filter(u=>u.main).map(u=>u.id)],['Доступ и безопасность',['016','017','019','020','021','025','026']],['Операции и ограничения',['040','041','042','044']],['Расхождения',['048','049']],['Доказательства',['060','061']],['Операционный день',['066','067']],['Инциденты и восстановление',['068','069','070']],['Правила и ручные кейсы',['071','073','074']]];
+function drawPicker(){const p=document.getElementById('picker');p.replaceChildren();GROUPS.forEach(g=>{const ids=g[1].filter(id=>AB[id]);if(!ids.length)return;const row=hh('div','grp',null,p);hh('span',null,g[0],row);
+ ids.forEach(id=>{const b=document.createElement('button');b.className='pick';b.type='button';b.textContent='UC-'+id;b.dataset.id=id;b.title=AB[id].title;b.setAttribute('aria-pressed','false');b.onclick=()=>selectUC(id,false);row.appendChild(b)})})}
+function selectUC(id,scroll){const u=AB[id];document.querySelectorAll('.pick').forEach(b=>b.setAttribute('aria-pressed',b.dataset.id===id));document.querySelectorAll('g.cnode').forEach(g=>g.classList.toggle('on',g.dataset.id===id));
+ const v=document.getElementById('aview');v.replaceChildren();const hd=hh('div','avhead',null,v);hh('h3',null,esc(u.uc+' · '+u.title),hd);hh('span','st',esc(u.status||''),hd);
+ if(u.main){const b=document.createElement('button');b.className='pick';b.textContent='Открыть полный текст и трассировку';b.onclick=()=>{hideAtlas();show(u.uc);window.scrollTo(0,0)};hd.appendChild(b)}
+ if(u.main){const ps=hh('div','pass',null,v);if(u.goal){const d=hh('div',null,'<h4>Цель</h4>'+u.goal,ps)}const d2=hh('div',null,'<h4>Актор и участники</h4><p>'+esc(u.actor)+(u.participants?'; '+esc(u.participants):'')+'</p>'+(u.pre?'<h4 style="margin-top:8px">Предусловия</h4>'+u.pre:''),ps)}
+ else{const nn=hh('div','two-notes',null,v);if(u.in_e1)hh('div','in','<h4>В Э1 (как в пакете)</h4>'+u.in_e1,nn);if(u.after)hh('div',null,'<h4>После Э1 (как в пакете)</h4>'+u.after,nn);
+  hh('p','cap','Сценарий вне основной цепочки, перенесён из пакета как есть: пошагового порядка нет. Полный текст и проверки — по ссылке '+'<button class="ref k-Сценарий" data-ref="'+u.uc+'" aria-expanded="false"><span class="rid">'+u.uc+'</span></button>.',v)}
+ const det=hh('div','adetail',null,null);
+ if(u.steps.length){const w=hh('div','scroll',null,v);drawFlow(w,u,det);hh('div','alegend','<span><i style="background:var(--surface);border-color:var(--core)"></i>шаг основного порядка</span><span><i style="background:var(--norm-bg);border-color:var(--norm)"></i>А — альтернативная ветвь</span><span><i style="background:var(--q-bg);border-color:var(--q)"></i>И — ошибка или неопределённый результат</span><span>код в углу шага — первое правило, на которое ссылается шаг</span>',v);v.appendChild(det);showStep(det,u.steps[0]);const g=v.querySelector('g.hit');if(g)g.classList.add('on')}
+ if(scroll)document.getElementById('aview-h').scrollIntoView({behavior:'smooth',block:'start'})}
+function showStep(d,st){d.className='adetail';d.innerHTML='<div class="k">Шаг '+st.n+' · '+esc(st.title)+' · '+esc(st.lane)+'</div>'+st.html}
+function showBr(d,b){d.className='adetail '+(b.kind==='A'?'alt':'err');d.innerHTML='<div class="k">'+(b.kind==='A'?'Альтернативная ветвь ':'Ошибка ')+b.id+' · '+(b.to>b.frm?'шаги '+b.frm+'–'+b.to:'шаг '+b.frm)+'</div><p><b>'+esc(b.cond)+'.</b></p>'+b.html}
+function drawFlow(host,u,det){const lanes=[];u.steps.forEach(st=>{if(!lanes.includes(st.lane))lanes.push(st.lane)});
+ const colW=214,boxW=194,boxH=90,laneH=112,labelW=150,brH=112,brGap=12,W=labelW+u.steps.length*colW+10;
+ const colOf=n=>{const i=u.steps.findIndex(x=>x.n===n);if(i>=0)return i;const j=u.steps.findIndex(x=>x.n>n);return j>=0?j:u.steps.length-1};
+ const lanesH=lanes.length*laneH,bandTop=lanesH+40,stacks={},order=[...u.br.filter(b=>b.kind==='A'),...u.br.filter(b=>b.kind==='E')];
+ order.forEach(b=>{const c=colOf(b.frm);b._c=c;b._r=stacks[c]=(stacks[c]===undefined?0:stacks[c]+1)});
+ const rows=order.length?Math.max(...order.map(b=>b._r))+1:0,H=bandTop+(rows?24+rows*(brH+brGap):0)+6;
+ const svg=sv('svg',{viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':'Дорожки сценария '+u.uc,style:`width:${W}px;max-width:none`},host);mark(svg,'af');
+ lanes.forEach((l,i)=>{sv('rect',{class:i%2?'lane-b2':'lane-b1',x:0,y:i*laneH,width:W,height:laneH},svg);sv('line',{class:'lane-ln',x1:0,y1:(i+1)*laneH,x2:W,y2:(i+1)*laneH},svg);wrapT(l,18,3).forEach((t,k)=>sv('text',{class:'lane-l',x:12,y:i*laneH+laneH/2-6+k*15},svg,t))});
+ const pos=u.steps.map((st,i)=>({x:labelW+i*colW+10,y:lanes.indexOf(st.lane)*laneH+(laneH-boxH)/2}));
+ u.steps.forEach((st,i)=>{if(!i)return;const a=pos[i-1],b=pos[i],y1=a.y+boxH/2,y2=b.y+boxH/2,x1=a.x+boxW,x2=b.x,mx=x1+(x2-x1)/2;sv('path',{class:'arr',d:y1===y2?`M${x1} ${y1} H${x2-2}`:`M${x1} ${y1} H${mx} V${y2} H${x2-2}`,'marker-end':'url(#af)'},svg)});
+ const hits=[];
+ u.steps.forEach((st,i)=>{const p=pos[i],g=sv('g',{class:'hit',tabindex:0,role:'button','aria-label':'Шаг '+st.n},svg);hits.push(g);
+  sv('rect',{class:'stepbox main',x:p.x,y:p.y,width:boxW,height:boxH,rx:4},g);sv('text',{class:'sn',x:p.x+10,y:p.y+18},g,'Шаг '+st.n);
+  if(st.ctrl)sv('text',{class:'sc',x:p.x+boxW-8,y:p.y+17,'text-anchor':'end'},g,st.ctrl);
+  wrapT(st.title,25,4).forEach((l,k)=>sv('text',{class:'sl',x:p.x+10,y:p.y+38+k*15},g,l));
+  const go=()=>{hits.forEach(x=>x.classList.remove('on'));g.classList.add('on');showStep(det,st)};g.addEventListener('click',go);g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go()}})});
+ if(rows)sv('text',{class:'band',x:12,y:lanesH+24},svg,'ВЕТВИ И ОШИБКИ');
+ order.forEach(b=>{const bx=labelW+b._c*colW+10,by=bandTop+24+b._r*(brH+brGap),cx=bx+boxW/2;
+  if(b._r===0)sv('line',{class:'conn',x1:cx,y1:pos[b._c].y+boxH,x2:cx,y2:by},svg);else sv('line',{class:'conn',x1:cx,y1:by-brGap,x2:cx,y2:by},svg);
+  const g=sv('g',{class:'hit',tabindex:0,role:'button','aria-label':'Ветвь '+b.id},svg);hits.push(g);
+  sv('rect',{class:'brbox '+b.kind,x:bx,y:by,width:boxW,height:brH,rx:4},g);sv('text',{class:'bt '+b.kind,x:bx+10,y:by+18},g,b.id+' · '+(b.to>b.frm?'шаги '+b.frm+'–'+b.to:'шаг '+b.frm));
+  wrapT(clipT(b.cond,96),25,5).forEach((l,k)=>sv('text',{class:'sl',x:bx+10,y:by+38+k*14},g,l));
+  const go=()=>{hits.forEach(x=>x.classList.remove('on'));g.classList.add('on');showBr(det,b)};g.addEventListener('click',go);g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go()}})})}
+function showAtlas(){document.getElementById('atlas').hidden=false;document.getElementById('ucmode').hidden=true;document.getElementById('uctabs').hidden=true;
+ document.getElementById('atlbtn').setAttribute('aria-selected','true');document.querySelectorAll('#ucs button').forEach(b=>b.setAttribute('aria-selected','false'));
+ $('#ttl').textContent='Атлас сценариев Э1';$('#sum').textContent='Основная цепочка по этапам и каждый сценарий по дорожкам участников: шаги, альтернативные ветви и ошибки. Тексты — из файлов сценариев пилота; ссылки раскрываются на месте.';
+ if(!document.getElementById('aview').childElementCount)selectUC('033',false);try{history.replaceState(null,'','#atlas')}catch(e){}}
+function hideAtlas(){document.getElementById('atlas').hidden=true;document.getElementById('ucmode').hidden=false;document.getElementById('uctabs').hidden=false;document.getElementById('atlbtn').setAttribute('aria-selected','false')}
+drawChain();drawPicker();
+document.getElementById('atlbtn').onclick=showAtlas;
+window.addEventListener('hashchange',()=>{const h=location.hash.slice(1); if(h==='atlas'){showAtlas()} else if(DATA.UCS[h]){hideAtlas(); show(h)}});
+const start=(location.hash||'').slice(1); show(DATA.UCS[start]?start:Object.keys(DATA.UCS)[0]); if(start==='atlas') showAtlas();
+$('#qall summary').textContent='Весь реестр: '+DATA.QS.length+' вопросов, открыто '+DATA.QS.filter(q=>q.status!=='закрыт').length;
+$('#qall tbody').innerHTML=DATA.QS.map(q=>`<tr${q.status==='закрыт'?' class="qclosed"':''}><td>${chip(q.id)}</td><td style="font-size:13px">${esc(q.title)}</td><td style="font-size:13px">${esc(q.status)}</td><td style="font-size:13px">${q.uc.map(esc).join(', ')||'—'}</td></tr>`).join('');
+$('#catl').innerHTML=['Сценарий','Правило','Норма','Решение','Вопрос','Модель','Настройка','Архитектура','Справка'].filter(k=>DATA.CAT[k]).map(k=>`<h3>${esc(k)} · ${DATA.CAT[k].length}</h3><ul>${DATA.CAT[k].map(x=>`<li>${chip(x.id)} ${esc((x.title.startsWith(x.id)?x.title.slice(x.id.length).trim():x.title).slice(0,90))} <span class="st">${esc(x.status)}</span>${x.review?' <span class="fl">● ревью</span>':''}</li>`).join('')}</ul>`).join('');
+$('#fl').innerHTML=DATA.FILES.map(f=>'<li>'+esc(f)+'</li>').join('');
+</script>

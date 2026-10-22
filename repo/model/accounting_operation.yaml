@@ -1,0 +1,125 @@
+id: K07
+entity: accounting_operation
+title: Учётная операция
+note: 'Единый результат учётного эффекта: операция и её записи K08 фиксируются одной транзакцией (T2). Транспортный ответ операцией не является. Проведённая операция неизменна; исправление — новой операцией (REV-R4). Номер операции и корреспондирующей операции для реестра 892-П гл.5 — вопрос RV-04. Записи расхода у РЦД могут нести второй актив — комиссию сети (C11).'
+origin: 'КЭ1-03 § K07; Связанные UC: 037,040,041. Опора: E1-03:P00094–P00101; P00133–P00142.'
+fields:
+- name: id
+  title: Внутренний ключ этой записи
+  type: ID
+  required: Да
+  key: PK
+  note: ''
+- name: command_id
+  title: Команда проведения
+  type: ID
+  required: Да
+  key: FK → command_receipt
+  note: ''
+- name: source_event_id
+  title: Основание зачисления
+  type: ID
+  required: Для зачисления
+  key: FK → external_event
+  note: ''
+- name: instrument_id
+  title: Выпуск
+  type: ID
+  required: Да
+  key: FK → instrument_version
+  note: ''
+- name: custody_link_id
+  title: Проверенная версия связи
+  type: ID
+  required: Да
+  key: FK → custody_link
+  note: ''
+- name: protection_id
+  title: Проверенная версия защиты
+  type: ID
+  required: Да
+  key: FK → protection_version
+  note: ''
+- name: business_key
+  title: Ключ однократного эффекта
+  type: Текст
+  required: Да
+  key: U1 в согласованном scope; MODEL-Q03; CD-D-27
+  note: 'Профиль: source_system + external_operation_key + CREDIT. Два eventId одного эффекта возвращают одну операцию; конфликт контекста запрещён'
+- name: rule_refs
+  title: Закреплённые версии применённых правил
+  type: Набор внешних ссылок
+  required: Да
+  key: CD-D-10/26
+  note: Результат выбора применимых правил. Не выбирать последнюю дату без основания
+- name: effective_at
+  title: Учётный момент эффекта
+  type: Момент
+  required: Да
+  key: ''
+  note: UTC и исходная зона
+  trace: NR-892-5#5.6
+- name: recorded_at
+  title: Момент фиксации в ЦД
+  type: Момент
+  required: Да
+  key: ''
+  note: UTC и исходная зона
+- name: commit_seq
+  title: Порядок фиксации
+  type: Порядковый номер
+  required: Да
+  key: U2 в журнале
+  note: строгий порядок фиксации для воспроизводимого cutoff; механизм выбирает архитектор
+  trace: NR-892-5#5.6
+- name: state
+  title: Состояние этого объекта
+  type: Код
+  required: Да
+  key: 'Коды: POSTED'
+  note: переходы — STATES
+- name: evidence_id
+  title: Доказательство основания или результата
+  type: ID
+  required: Да
+  key: FK → evidence
+  note: ''
+  trace: NR-892-9#1.12
+- name: source_operation_id
+  title: Основание — внешняя операция
+  type: ID
+  required: Для зачисления по РЦД
+  key: FK → external_operation
+  note: 'Для зачисления заполнена ровно одна из ссылок: source_event_id или source_operation_id'
+- name: component_id
+  title: Составляющая права
+  type: ID
+  required: Для исполнения составляющей
+  key: FK → instrument_component
+  note: Операция исполнения (выплата, поставка, осуществление прав) относится к одной составляющей K23. REV-R14
+- name: instruction_id
+  title: Поручение-основание
+  type: ID
+  required: Для записи на пассивный счёт
+  key: FK → external_operation
+  trace: NR-892-9#11.9
+  note: поручение депонента на зачисление (K11 вида «ввод»), по которому сделана запись клиенту; основание записи на AA — документ ОИС в evidence_id (DEC-2026-10-22-03)
+links:
+- id: L10
+  link: command_id → command_receipt.id; к родителю 1, обратно 0..N
+  required: Да
+- id: L11
+  link: source_event_id → external_event.id; к родителю 0..1, обратно 0..N
+  required: Для зачисления
+- id: L12
+  link: instrument_id → instrument_version.id; к родителю 1, обратно 0..N
+  required: Да
+- id: L13
+  link: custody_link_id → custody_link.id; к родителю 1, обратно 0..N
+  required: Да
+- id: L14
+  link: protection_id → protection_version.id; к родителю 1, обратно 0..N
+  required: Да
+- id: L15
+  link: evidence_id → evidence.id; к родителю 1, обратно 0..N
+  required: Да

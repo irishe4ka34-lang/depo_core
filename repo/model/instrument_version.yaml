@@ -1,0 +1,20 @@
+id: K03
+entity: instrument_version
+title: Версия выпуска (карточка цифрового права)
+note: "Поля с пометкой «892-П гл.3» в пакете пока отсутствуют — предложение пилота."
+fields:
+  - {name: id, type: ID, required: true}
+  - {name: instrument_key, type: ID, required: true, note: стабильная идентичность между версиями}
+  - {name: digital_rights_id, type: Text, required: true, trace: "NR-892-3#3.10", note: "892-П гл.3: номер решения и, при необходимости, ИС и идентификаторы прав через «_»"}
+  - {name: digital_rights_kind, type: "Code(DFA|UDR|HDR)", required: true, trace: "NR-892-3#3.7", note: "892-П гл.3: ЦФА / УЦП / ГЦП"}
+  - {name: right_profile_ref, type: "Code(PF1..PF4)", required: true, trace: "NR-282-7#profiles", note: профиль для правил обязательности}
+  - {name: issuer_ref, type: ExternalRef, required: true, trace: "NR-892-3#3.7", note: сведения об эмитенте из решения}
+  - {name: ois_operator, type: "Text + ИНН", required: true, trace: "NR-892-3#3.11", note: "892-П гл.3: наименование и ИНН оператора ИС"}
+  - {name: source_system, type: Code, required: true}
+  - {name: external_id, type: ID, required: true, note: "ID выпуска в ОИС; уникален в паре с source_system"}
+  - {name: source_version, type: Version, required: true}
+  - {name: issue_decision_evidence_id, type: "FK→evidence", required: true, trace: "NR-892-3#3.13", note: решение о выпуске с ЭП и результат ручной проверки}
+  - {name: quantity_scale, type: "Int 0..18", required: true, trace: "NR-892-8#8.2", note: "REV-R12"}
+  - {name: min_step, type: "Int ≥ 1", required: true, trace: "REV-R12"}
+  - {name: admission_check_id, type: "FK→evidence", required: "для MAPPED", trace: "REV-R13", note: исход и версия правил обязательности}
+  - {name: state, type: "Code(NEEDS_REVIEW|MAPPED)", required: true}

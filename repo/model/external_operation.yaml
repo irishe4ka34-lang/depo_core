@@ -1,0 +1,155 @@
+id: K11
+entity: external_operation
+title: Наблюдение внешней операции
+note: Наблюдение внешнего действия и его подтверждённого или неизвестного исхода. Для ручного открытия счёта N (UC-032) — регистрация сотрудником заявления и полученного ответа, а не автоматическая отправка. UNKNOWN не становится отказом по истечении ожидания. Для РЦД хранятся исходный статус и класс PENDING/UNKNOWN/CONFIRMED/REJECTED.
+origin: 'КЭ1-03 § K11; Опора прежней модели: E1-03:P00110–P00112; P00134–P00137; P01045–P01126; связанные UC: 032,040.'
+fields:
+- name: id
+  title: Внутренний ключ этой записи
+  type: ID
+  required: Да
+  key: PK
+  note: ''
+- name: request_receipt_id
+  title: Внутренняя команда регистрации сведений о внешнем действии
+  type: ID
+  required: Да
+  key: FK → command_receipt
+  note: ''
+- name: source_system
+  title: ОИС
+  type: Код
+  required: Да
+  key: CD-D-27
+  note: ''
+- name: external_id
+  title: ID операции ОИС
+  type: ID
+  required: После получения
+  key: U1 с source_system при наличии
+  note: ОИС
+- name: request_key
+  title: Устойчивый внутренний ключ регистрации обращения
+  type: ID
+  required: Да
+  key: U2 с source_system
+  note: ЦД по профилю из настроек. Для UC-032 ключ связывает сохранённые сведения и выяснение результата; он не объявлен ключом API или ID, который обязана вернуть ОИС. Как ОИС идентифицирует заявку — OD-22
+- name: kind
+  title: Вид внешнего действия
+  type: Код
+  required: Да
+  key: DEPOSIT/WITHDRAWAL/TRANSFER/UNSOLICITED
+  note: OPEN_ACCOUNT — наблюдение ручного открытия в UC-032, не автоматический вызов; расходные виды — при включении MX02/MX05; UNSOLICITED — движение у РЦД без нашего поручения
+- name: state
+  title: Состояние этого объекта
+  type: Код
+  required: Да
+  key: 'Коды: DRAFT/PREPARED/PENDING/UNKNOWN/CONFIRMED/REJECTED'
+  note: DRAFT и PREPARED — только для OPEN_ACCOUNT (UC-032); переходы — STATES
+- name: custody_link_id
+  title: Полученная связь
+  type: ID
+  required: После подтверждения и проверки
+  key: FK → custody_link
+  note: ''
+- name: evidence_id
+  title: Доказательство основания или результата
+  type: ID
+  required: Для доказанного конечного исхода
+  key: FK → evidence
+  note: ''
+  trace: NR-892-11#11.1
+- name: last_observed_at
+  title: Последнее наблюдение исхода
+  type: Момент
+  required: Да
+  key: ''
+  note: UTC и исходная зона
+- name: external_status
+  title: Исходный статус РЦД
+  type: Код
+  required: Для РЦД
+  key: ''
+  note: коды 2.7 API; state хранит класс PENDING/UNKNOWN/CONFIRMED/REJECTED; матрица — STATES
+- name: last_update_no
+  title: Последний updateNo
+  type: Целое
+  required: Для РЦД
+  key: ''
+  note: updateNo; Ответ с меньшим номером класс не меняет
+- name: effective_until
+  title: Срок исполнения поручения
+  type: Момент
+  required: Нет
+  key: ''
+  note: effectiveUntil; Истечение срока даёт REJECTED у РЦД
+- name: return_receipt_id
+  title: Операция возврата
+  type: ID
+  required: Нет
+  key: ''
+  note: returnReceiptId; Отказ ввода с возвратом ЦВ на адрес-источник
+- name: base_document_kind
+  title: Вид основания движения
+  type: Код
+  required: Для UNSOLICITED
+  key: ''
+  note: CLIENT_ORDER/SERVICE_ORDER/CLEARING_ORDER; Отчёт 3.6 РЦД (объявлен будущим)
+- name: target_account_id
+  title: Счёт клиента для зачисления
+  type: ID
+  required: Для DEPOSIT
+  key: FK → account
+  note: Получатель записи ACCOUNT в T2
+- name: basis_id
+  title: Основание обращения
+  type: ID
+  required: Для OPEN_ACCOUNT
+  key: FK → basis_ref
+  trace: DEC-2026-10-22-01
+  note: присоединение к правилам ИС и полномочия подписанта; без него — только DRAFT
+- name: account_kind
+  title: Вид запрашиваемого счёта
+  type: Код
+  required: Для OPEN_ACCOUNT
+  key: 'Коды: REGULAR/TRADING'
+  note: обычный или торговый счёт номинального держателя
+- name: channel
+  title: Канал передачи
+  type: Код
+  required: При PENDING
+  key: 'Коды: OIS_CABINET/EMAIL'
+  trace: DEC-2026-10-22-01
+  note: личный кабинет участника ОИС или электронная почта; файл подписан УКЭП
+- name: request_evidence_id
+  title: Зарегистрированный комплект заявления
+  type: ID
+  required: При PENDING
+  key: FK → evidence
+  trace: NR-892-9#1.12
+  note: отправленный файл с подписью и подтверждение отправки
+- name: external_request_ref
+  title: Номер обращения или идентификатор письма
+  type: Текст
+  required: При PENDING
+  note: номер обращения в личном кабинете ОИС или Message-ID письма
+- name: sent_at
+  title: Время отправки
+  type: Момент
+  required: При PENDING
+  note: по умолчанию — время регистрации передачи
+- name: sent_by
+  title: Кто отправил
+  type: Внешняя ссылка IAM
+  required: При PENDING
+  note: из сессии операциониста
+links:
+- id: L29
+  link: request_receipt_id → command_receipt.id; к родителю 1, обратно 0..N
+  required: Да
+- id: L30
+  link: custody_link_id → custody_link.id; к родителю 0..1, обратно 0..N
+  required: После подтверждения и проверки
+- id: L31
+  link: evidence_id → evidence.id; к родителю 0..1, обратно 0..N
+  required: Для доказанного конечного исхода

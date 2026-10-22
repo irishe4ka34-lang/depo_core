@@ -1,0 +1,85 @@
+id: K17
+entity: statement_line
+title: Строка выписки
+note: Показанное движение журнала или итог по выпуску. Неизменна вместе с экземпляром выписки; итоговые строки не выдаются за первичные записи.
+origin: 'КЭ1-03 § K17; Связанные UC: 056. Опора: E1-03:P00098–P00101; P01174; P01847.'
+fields:
+- name: id
+  title: Внутренний ключ этой записи
+  type: ID
+  required: Да
+  key: PK
+  note: ''
+- name: statement_id
+  title: Экземпляр
+  type: ID
+  required: Да
+  key: FK → statement
+  note: ''
+- name: line_no
+  title: Порядок строки
+  type: Целое
+  required: Да
+  key: U1 с statement_id
+  note: ''
+- name: line_kind
+  title: Тип строки
+  type: Код
+  required: Да
+  key: 'Коды: MOVEMENT/BALANCE'
+  note: ''
+- name: entry_id
+  title: Первичная запись
+  type: ID
+  required: Для MOVEMENT; иначе пусто
+  key: FK → accounting_entry
+  note: 'MOVEMENT: запись ACCOUNT этого statement.account_id, тот же выпуск/место, точное quantity_delta, попадание в период и cutoff; контроль полноты набора'
+- name: instrument_id
+  title: Выпуск
+  type: ID
+  required: Да
+  key: FK → instrument_version
+  note: ''
+- name: custody_link_id
+  title: Место учёта
+  type: ID
+  required: Да
+  key: FK → custody_link
+  note: ''
+- name: quantity
+  title: Изменение либо итог
+  type: Количество
+  required: Да
+  key: ''
+  note: целое число минимальных единиц (REV-R12); Смысл задаёт line_kind; не суммировать движение и итог
+- name: effective_at
+  title: Учётный момент строки
+  type: Момент
+  required: Да
+  key: ''
+  note: UTC и исходная зона
+- name: source_locator
+  title: Локатор расчёта
+  type: Текст
+  required: Да
+  key: ''
+  note: 'Формирование выписки. Для BALANCE: cutoff и версия; для MOVEMENT: entry_id'
+- name: balance_role
+  title: Смысл итоговой строки
+  type: Код
+  required: Для BALANCE; иначе пусто
+  key: 'Коды: OPENING/CLOSING'
+  note: Начальный итог до начала периода, конечный по as_of; оба на том же cutoff
+links:
+- id: L49
+  link: statement_id → statement.id; к родителю 1, обратно 0..N
+  required: Да
+- id: L50
+  link: entry_id → accounting_entry.id; к родителю 0..1, обратно 0..N
+  required: Для MOVEMENT; иначе пусто
+- id: L51
+  link: instrument_id → instrument_version.id; к родителю 1, обратно 0..N
+  required: Да
+- id: L52
+  link: custody_link_id → custody_link.id; к родителю 1, обратно 0..N
+  required: Да

@@ -1,0 +1,18 @@
+id: K24
+entity: agent_authority
+title: Полномочие посредника
+note: "Юридическое полномочие посредника от клиента; ведётся рядом с реестром депонентов, ядро хранит ссылку и проверяет при каждой команде (REV-R25)."
+fields:
+  - {name: id, type: ID, required: true}
+  - {name: principal_party_id, type: "FK→party_ref", required: true, note: доверитель — клиент}
+  - {name: agent_party_id, type: "FK→party_ref", required: true, note: посредник}
+  - {name: document_evidence_id, type: "FK→evidence", required: true, trace: "NR-892-9#1.12", note: доверенность; регистрируется с номером и временем}
+  - {name: form, type: "Code(APPROVED|OTHER)", required: true, trace: "REV-R22", note: "OTHER — через контролёра"}
+  - {name: scope, type: "Set(OPEN|ORDERS|REPORTS|<вид операции>)", required: true, trace: "REV-R25"}
+  - {name: account_scope, type: "ALL | LIST(account_id)", required: true, trace: "REV-R25", note: "ALL — все счета доверителя у этого посредника, включая будущие"}
+  - {name: valid_from, type: Date, required: true}
+  - {name: valid_to, type: Date, required: false, note: "истечение — EXPIRED"}
+  - {name: state, type: "Code(ACTIVE|REVOKED|EXPIRED)", required: true, trace: "REV-R25", note: "отзыв действует сразу на все счета"}
+  - {name: revoked_at, type: DateTime, required: "при REVOKED"}
+  - {name: revocation_evidence_id, type: "FK→evidence", required: "при REVOKED"}
+  - {name: verified_by, type: ID, required: true, note: "при form = OTHER — контролёр"}

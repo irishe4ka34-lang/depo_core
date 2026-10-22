@@ -1,0 +1,86 @@
+id: K09
+entity: position_projection
+title: Проекция позиции
+note: Позиция, пересчитываемая из неизменного журнала на заданный cutoff. Не самостоятельное основание права; количество не правится прямым вводом. Заблокированного и обременённого количества в модели пока нет (MODEL-Q11).
+origin: 'КЭ1-03 § K09; Связанные UC: 037,047,056. Опора: E1-03:P00028–P00043; P00078–P00081; P00140.'
+fields:
+- name: id
+  title: Внутренний ключ этой записи
+  type: ID
+  required: Да
+  key: PK
+  note: ''
+- name: level
+  title: Уровень позиции
+  type: Код
+  required: Да
+  key: 'U1: level, account/пусто, section/пусто, стабильные instrument/custody, as_of, cutoff_seq, calculation_version'
+  note: ACCOUNT/COVERAGE
+- name: account_id
+  title: Счёт
+  type: ID
+  required: Для ACCOUNT; иначе пусто
+  key: FK → account
+  note: ''
+- name: section_id
+  title: Раздел
+  type: ID
+  required: Нет; если включён
+  key: FK → account_section
+  note: При наличии принадлежит account_id
+- name: instrument_id
+  title: Выпуск
+  type: ID
+  required: Да
+  key: FK → instrument_version
+  note: ''
+- name: custody_link_id
+  title: Место учёта
+  type: ID
+  required: Да
+  key: FK → custody_link
+  note: ''
+- name: cutoff_seq
+  title: Последняя включённая фиксация
+  type: Порядковый номер
+  required: Да
+  key: U1
+  note: Журнал операций. Не включать частичную операцию
+- name: as_of
+  title: Учётный срез
+  type: Момент
+  required: Да
+  key: ''
+  note: UTC и исходная зона
+- name: total_quantity
+  title: Итог из журнала
+  type: Количество
+  required: Да
+  key: ''
+  note: целое число минимальных единиц; масштаб — quantity_scale выпуска (REV-R12)
+  trace: NR-892-8#8.4
+- name: available_quantity
+  title: Доступное количество
+  type: Количество
+  required: Только ACCOUNT при доказанном расчёте
+  key: ''
+  note: целое число минимальных единиц (REV-R12); Не отрицательно; не вычислять пересечения ограничений догадкой
+- name: calculation_version
+  title: Версия алгоритма проекции
+  type: Версия
+  required: Да
+  key: ''
+  note: ''
+links:
+- id: L22
+  link: account_id → account.id; к родителю 0..1, обратно 0..N
+  required: Для ACCOUNT; иначе пусто
+- id: L23
+  link: section_id → account_section.id; к родителю 0..1, обратно 0..N
+  required: Нет; если включён
+- id: L24
+  link: instrument_id → instrument_version.id; к родителю 1, обратно 0..N
+  required: Да
+- id: L25
+  link: custody_link_id → custody_link.id; к родителю 1, обратно 0..N
+  required: Да
