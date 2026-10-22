@@ -1,1 +1,0 @@
-# depo_core
